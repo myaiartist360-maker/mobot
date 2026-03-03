@@ -88,41 +88,33 @@ MOBOT adds a new `android_control` tool with **13 actions**:
 
 > Install [Termux](https://f-droid.org/packages/com.termux/) and [Termux:API](https://f-droid.org/packages/com.termux.api/) from **F-Droid** first (NOT Play Store).
 
-**One-liner installer (clones from GitHub + installs from source):**
+**One-liner:**
 ```bash
 pkg install curl git -y && curl -sSL https://raw.githubusercontent.com/myaiartist360-maker/mobot/master/install-termux.sh | bash
 ```
 
 **Or step-by-step:**
 ```bash
-# Step 1 — Install build tools and Rust (needed for native dependencies)
 pkg update && pkg upgrade -y
-pkg install git python python-pip rust build-essential termux-api -y
+pkg install git python python-pip termux-api -y
 
-# Step 2 — Grant storage access (for screenshots)
+# Grant storage access (for screenshots)
 termux-setup-storage
 
-# Step 3 — Clone MOBOT source from GitHub
-# (mobot-ai is not on PyPI yet — install from source)
+# Clone and install from source (not on PyPI yet)
 git clone https://github.com/myaiartist360-maker/mobot.git
 cd mobot
+export ANDROID_API_LEVEL=24   # safety net for any Rust-based build tools
+pip install -e .
 
-# Step 4 — Install from source
-# MATHLIB="" prevents ARM64 linker conflict
-# Do NOT run 'pip install --upgrade pip' in Termux — it is forbidden
-MATHLIB="" pip install -e .
-
-# Step 5 — Add mobot to PATH
+# Add mobot to PATH
 export PATH="$PATH:$HOME/.local/bin"
 echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc
 
-# Step 6 — Set up
 mobot onboard
 ```
 
-> ⚠️ **Termux rule**: Never run `pip install --upgrade pip` — pip is managed by `pkg`.
-
-> ⚠️ **If you see a `fastuuid` build error**: Rust is compiling from source on ARM64 — this takes 10–20 min. Make sure `pkg install rust` completed first, then re-run `MATHLIB="" pip install -e .`.
+> ⚠️ **Never run `pip install --upgrade pip` in Termux** — pip is managed by `pkg`.
 
 ### 💻 On PC (control phone via ADB)
 
