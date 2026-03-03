@@ -88,9 +88,9 @@ MOBOT adds a new `android_control` tool with **13 actions**:
 
 > Install [Termux](https://f-droid.org/packages/com.termux/) and [Termux:API](https://f-droid.org/packages/com.termux.api/) from **F-Droid** first (NOT Play Store).
 
-**One-liner installer:**
+**One-liner installer (clones from GitHub + installs from source):**
 ```bash
-pkg install curl -y && curl -sSL https://raw.githubusercontent.com/myaiartist360-maker/mobot/master/install-termux.sh | bash
+pkg install curl git -y && curl -sSL https://raw.githubusercontent.com/myaiartist360-maker/mobot/master/install-termux.sh | bash
 ```
 
 **Or step-by-step:**
@@ -102,34 +102,42 @@ pkg install git python python-pip rust build-essential termux-api -y
 # Step 2 — Grant storage access (for screenshots)
 termux-setup-storage
 
-# Step 3 — Clone and install
+# Step 3 — Clone MOBOT source from GitHub
+# (mobot-ai is not on PyPI yet — install from source)
 git clone https://github.com/myaiartist360-maker/mobot.git
 cd mobot
+
+# Step 4 — Install from source
+# MATHLIB="" prevents ARM64 linker conflict
+# Do NOT run 'pip install --upgrade pip' in Termux — it is forbidden
 MATHLIB="" pip install -e .
 
-# Step 4 — Set up
+# Step 5 — Add mobot to PATH
+export PATH="$PATH:$HOME/.local/bin"
+echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc
+
+# Step 6 — Set up
 mobot onboard
 ```
 
-> ⚠️ **If you see a `fastuuid` build error** during `pip install`: This is because some dependencies require Rust to compile on Android ARM64. Run `pkg install rust -y` first, then re-run `pip install -e .`. See [Troubleshooting](#-troubleshooting-on-android) below.
+> ⚠️ **Termux rule**: Never run `pip install --upgrade pip` — pip is managed by `pkg`.
+
+> ⚠️ **If you see a `fastuuid` build error**: Rust is compiling from source on ARM64 — this takes 10–20 min. Make sure `pkg install rust` completed first, then re-run `MATHLIB="" pip install -e .`.
 
 ### 💻 On PC (control phone via ADB)
 
 ```bash
-pip install mobot-ai
+# mobot-ai is not on PyPI yet — install from source
+git clone https://github.com/myaiartist360-maker/mobot.git
+cd mobot
+pip install -e .
 mobot onboard
 # Connect phone via USB with USB Debugging enabled
 mobot agent -m "take a screenshot of my phone"
 ```
 
-**Install from source:**
-```bash
-git clone https://github.com/myaiartist360-maker/mobot.git
-cd mobot
-pip install -e .
-```
-
 ---
+
 
 ## 🚀 Quick Start
 
