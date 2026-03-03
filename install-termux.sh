@@ -21,10 +21,17 @@ echo ""
 echo "[1/6] Updating Termux packages..."
 pkg update -y && pkg upgrade -y
 
-# ── Step 2: Install Python and Git ───────────────────────
-echo "[2/6] Installing Python and Git..."
+# ── Step 2: Install all dependencies ─────────────────────
+echo "[2/6] Installing system dependencies..."
 # NOTE: Never run 'pip install --upgrade pip' in Termux — pip is managed by pkg
-pkg install python python-pip git -y
+# Install pre-built native packages via pkg to avoid compiling from source:
+#   python-lxml     → needed by readability-lxml (avoids building lxml from C source)
+#   libxml2/libxslt → required by lxml (fallback if python-lxml pkg unavailable)
+#   python-cryptography → needed by many packages (avoids Rust compilation)
+pkg install python python-pip git \
+    python-lxml libxml2 libxslt \
+    python-cryptography \
+    termux-api -y
 
 # ── Step 3: Clone MOBOT from GitHub ──────────────────────
 echo "[3/6] Cloning MOBOT from GitHub..."
@@ -38,10 +45,9 @@ fi
 
 # ── Step 4: Install MOBOT Python package ─────────────────
 echo "[4/6] Installing MOBOT..."
-# litellm is pinned <1.76.1 in pyproject.toml — this avoids the fastuuid dependency
-# which has no pre-built ARM64 wheel and fails to compile on Termux.
-# Setting ANDROID_API_LEVEL as a safety net for any other Rust-based packages.
 cd "$MOBOT_DIR"
+# ANDROID_API_LEVEL: safety net for any remaining Rust/maturin based packages
+# litellm is pinned <1.76.1 in pyproject.toml which removes fastuuid dependency
 export ANDROID_API_LEVEL=24
 pip install -e .
 
@@ -52,8 +58,8 @@ if ! grep -q '.local/bin' "$HOME/.bashrc" 2>/dev/null; then
 fi
 
 # ── Step 5: Termux:API for Android control ───────────────
-echo "[5/6] Installing Termux:API for Android control..."
-pkg install termux-api -y
+echo "[5/6] Installing Termux:API pkg for Android control..."
+pkg install termux-api -y 2>/dev/null || true
 
 echo ""
 echo "  ⚠  IMPORTANT: Also install the 'Termux:API' companion app"
