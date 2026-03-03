@@ -19,13 +19,15 @@ echo "[1/6] Updating Termux packages..."
 pkg update -y && pkg upgrade -y
 
 # ── Step 2: Install Python and Git ───────────────────────
-echo "[2/6] Installing Python, Git, and build tools..."
-pkg install python python-pip git binutils -y
+echo "[2/6] Installing Python, Git, Rust, and build tools..."
+pkg install python python-pip git binutils rust build-essential -y
 
 # ── Step 3: Install MOBOT ────────────────────────────────
 echo "[3/6] Installing MOBOT..."
 pip install --upgrade pip
-pip install mobot-ai
+# MATHLIB="" prevents a linker conflict on Android ARM64
+# Rust (installed above) is required to build fastuuid and other native deps
+MATHLIB="" pip install mobot-ai
 
 # ── Step 4: Optional Termux:API (Android control) ────────
 echo "[4/6] Installing Termux:API for enhanced Android control..."
