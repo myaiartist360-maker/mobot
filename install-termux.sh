@@ -4,7 +4,7 @@
 # Termux Bootstrap Installer
 # =========================================================
 # Run this script inside Termux to install MOBOT:
-#   curl -sSL https://raw.githubusercontent.com/your-fork/mobot/main/install-termux.sh | bash
+#   curl -sSL https://raw.githubusercontent.com/myaiartist360-maker/mobot/master/install-termux.sh | bash
 # =========================================================
 
 set -e
@@ -18,15 +18,16 @@ echo ""
 echo "[1/6] Updating Termux packages..."
 pkg update -y && pkg upgrade -y
 
-# ── Step 2: Install Python and Git ───────────────────────
+# ── Step 2: Install Python, Git, Rust and build tools ────
 echo "[2/6] Installing Python, Git, Rust, and build tools..."
+# NOTE: Use pkg to manage python-pip in Termux — never run 'pip install --upgrade pip'
 pkg install python python-pip git binutils rust build-essential -y
 
 # ── Step 3: Install MOBOT ────────────────────────────────
 echo "[3/6] Installing MOBOT..."
-pip install --upgrade pip
 # MATHLIB="" prevents a linker conflict on Android ARM64
 # Rust (installed above) is required to build fastuuid and other native deps
+# NOTE: Do NOT run 'pip install --upgrade pip' in Termux — it is blocked by design
 MATHLIB="" pip install mobot-ai
 
 # ── Step 4: Optional Termux:API (Android control) ────────

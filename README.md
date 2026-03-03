@@ -440,6 +440,7 @@ chmod +x ~/.termux/boot/start-mobot.sh
 
 | Problem | Fix |
 |---------|-----|
+| **`pip install --upgrade pip` is forbidden** | Termux manages pip via `pkg`. Never run `pip install --upgrade pip`. Use `pkg install python-pip` instead |
 | **`fastuuid` build error** during `pip install` | Run `pkg install rust -y` first, then retry `MATHLIB="" pip install -e .` |
 | `mobot: command not found` | Add to PATH: `echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc && source ~/.bashrc` |
 | `pkg install` fails | Run `pkg update && pkg upgrade -y` first |
