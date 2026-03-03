@@ -29,8 +29,9 @@ pkg install python python-pip git -y
 # ── Step 3: Clone MOBOT from GitHub ──────────────────────
 echo "[3/6] Cloning MOBOT from GitHub..."
 if [ -d "$MOBOT_DIR" ]; then
-    echo "     Found existing install at $MOBOT_DIR — pulling latest..."
-    git -C "$MOBOT_DIR" pull
+    echo "     Found existing install at $MOBOT_DIR — updating to latest..."
+    git -C "$MOBOT_DIR" fetch origin
+    git -C "$MOBOT_DIR" reset --hard origin/master
 else
     git clone "$MOBOT_REPO" "$MOBOT_DIR"
 fi
