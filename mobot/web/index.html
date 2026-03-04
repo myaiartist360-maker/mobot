@@ -694,6 +694,44 @@
       </div>
     </div>
 
+    <!-- OLLAMA -->
+    <div class="card" style="border-color:rgba(0,212,170,.25)">
+      <div class="card-title"><span>🦙</span>Ollama (Local Models) <span
+          style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px">No API key needed</span></div>
+      <p class="hint" style="margin-bottom:16px">Connect to a locally running <a href="https://ollama.com"
+          target="_blank">Ollama</a> instance and pick a model. Ollama must be running (<code>ollama serve</code>).</p>
+      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+        <div class="field" style="flex:1;min-width:220px">
+          <label>Ollama URL</label>
+          <input id="ollama-base" value="http://localhost:11434" placeholder="http://localhost:11434">
+        </div>
+        <button onclick="fetchOllamaModels()" id="ollama-fetch-btn"
+          style="background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:9px 16px;border-radius:7px;font-size:13px;cursor:pointer;white-space:nowrap;height:38px">
+          🔄 Fetch Models
+        </button>
+      </div>
+      <div id="ollama-error"
+        style="display:none;font-size:12px;color:var(--danger);margin-bottom:10px;padding:8px 12px;background:rgba(248,81,73,.08);border-radius:6px;border:1px solid rgba(248,81,73,.25)">
+      </div>
+      <div id="ollama-model-row" style="display:none;gap:10px;align-items:flex-end;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:200px">
+          <label>Available Models</label>
+          <select id="ollama-model-select">
+            <option value="">— select a model —</option>
+          </select>
+        </div>
+        <button onclick="applyOllamaModel()"
+          style="background:var(--accent);color:#000;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;height:38px">
+          ✔ Use this model
+        </button>
+      </div>
+      <p id="ollama-tip" style="display:none;font-size:11px;color:var(--muted);margin-top:10px">
+        Tip: After clicking “Use this model” the Default Model field and API Base are auto-filled. Click <strong>Save
+          Config</strong> to apply.
+      </p>
+    </div>
+    </div>
+
     <!-- ── AGENT ── -->
     <div id="section-agent" class="section">
       <div class="card">
@@ -826,8 +864,8 @@
         <div class="toggle-row">
           <div>
             <div class="toggle-label">Enable WhatsApp</div>
-            <div class="toggle-desc">Requires Node.js ≥18. Run <strong>mobot channels setup</strong> first if not
-              already done.</div>
+            <div class="toggle-desc">Requires Node.js ≥18. Use <strong>Connect WhatsApp (Show QR)</strong> below, or run
+              <code>mobot channels login</code> in terminal.</div>
           </div>
           <label class="toggle"><input id="wa-enabled" type="checkbox"
               onchange="updateBadge('whatsapp',this.checked)"><span class="toggle-slider"></span></label>
@@ -1464,6 +1502,54 @@
         // Fallback: show the raw data for manual QR generation
         appendLog('QR data: ' + data);
       }
+    }
+
+    // ── Ollama local model picker ────────────────────────────────────────────────────────────
+    async function fetchOllamaModels() {
+      const base = document.getElementById('ollama-base').value.trim() || 'http://localhost:11434';
+      const btn = document.getElementById('ollama-fetch-btn');
+      const errEl = document.getElementById('ollama-error');
+      const rowEl = document.getElementById('ollama-model-row');
+      const sel = document.getElementById('ollama-model-select');
+      btn.disabled = true;
+      btn.textContent = '⏳ Fetching...';
+      errEl.style.display = 'none';
+      rowEl.style.display = 'none';
+      try {
+        const res = await fetch('/api/ollama/models?' + new URLSearchParams({ base }));
+        const data = await res.json();
+        if (!data.ok || data.models.length === 0) {
+          errEl.textContent = data.error
+            ? '⚠ ' + data.error + (data.hint ? ' — ' + data.hint : '')
+            : '⚠ No models found. Run: ollama pull llama3.2';
+          errEl.style.display = 'block';
+        } else {
+          sel.innerHTML = '<option value="">— select a model —</option>' +
+            data.models.map(m => `<option value="${m}">${m}</option>`).join('');
+          rowEl.style.display = 'flex';
+          document.getElementById('ollama-tip').style.display = 'block';
+        }
+      } catch (e) {
+        errEl.textContent = '⚠ Cannot reach Ollama. Is it running? (ollama serve)';
+        errEl.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔄 Fetch Models';
+      }
+    }
+
+    function applyOllamaModel() {
+      const sel = document.getElementById('ollama-model-select');
+      const modelName = sel.value;
+      if (!modelName) return;
+      const base = document.getElementById('ollama-base').value.trim() || 'http://localhost:11434';
+      // Set default model in litellm format
+      document.getElementById('model').value = 'ollama/' + modelName;
+      // Set custom API base to Ollama's OpenAI-compatible endpoint
+      document.getElementById('base-custom').value = base + '/v1';
+      // Nav to provider section so user sees the change
+      document.querySelector('[data-section="provider"]').click();
+      showToast('✔ Model set to ollama/' + modelName + '. Click Save Config to apply.', 'ok');
     }
 
     // ── Init ──────────────────────────────────────────────────────────────────

@@ -236,6 +236,23 @@ class _Handler(BaseHTTPRequestHandler):
             except Exception:
                 pass
 
+        elif path == "/api/ollama/models":
+            # Fetch available models from a locally running Ollama server
+            import urllib.parse
+            import urllib.request
+            qs = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            base = qs.get("base", ["http://localhost:11434"])[0].rstrip("/")
+            try:
+                req = urllib.request.urlopen(f"{base}/api/tags", timeout=5)
+                data = json.loads(req.read())
+                models = [m["name"] for m in data.get("models", [])]
+                self._json(200, {"ok": True, "models": models, "base": base})
+            except Exception as e:
+                self._json(200, {
+                    "ok": False, "models": [], "error": str(e),
+                    "hint": "Make sure Ollama is running: ollama serve"
+                })
+
         else:
             self._send(404, "text/plain", "Not found")
 
