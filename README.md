@@ -143,7 +143,21 @@ mobot agent -m "take a screenshot of my phone"
 mobot onboard
 ```
 
-**2. Configure** (`~/.mobot/config.json`)
+**2. Configure via Web UI** ← easiest!
+
+```bash
+mobot web   # opens http://localhost:7891 in your browser
+```
+
+The web UI lets you:
+- Set your LLM API key (OpenRouter, Anthropic, OpenAI, Gemini, etc.)
+- **Connect WhatsApp by scanning a QR code** directly in the browser
+- Enable and configure all channels (Telegram, Discord, Slack, Email, Matrix, DingTalk, Feishu, QQ)
+- Tune agent settings and Android options
+
+> On Android / Termux — just run `mobot web` and open `http://localhost:7891` in your phone's browser.
+
+**Or configure manually** (`~/.mobot/config.json`)
 
 ```json
 {
