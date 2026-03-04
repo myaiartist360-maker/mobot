@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤖 MOBOT Config</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117; --bg2: #161b22; --bg3: #1f2937;
+  --border: #30363d; --accent: #00d4aa; --accent2: #0ea5e9;
+  --text: #e6edf3; --muted: #8b949e; --danger: #f85149;
+  --success: #3fb950; --warn: #d29922;
+  --radius: 10px; --glass: rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+/* ── Sidebar ── */
+#sidebar{
+  width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
+  padding:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:10;
+  overflow-y:auto;
+}
+#logo{padding:20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+#logo span{font-size:22px}
+#logo h2{font-size:14px;font-weight:700;color:var(--accent);letter-spacing:.5px}
+#logo p{font-size:11px;color:var(--muted);margin-top:2px}
+.nav-section{padding:12px 8px 4px;font-size:10px;font-weight:600;color:var(--muted);
+  letter-spacing:1px;text-transform:uppercase}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 16px;margin:1px 8px;
+  border-radius:6px;cursor:pointer;font-size:13px;color:var(--muted);transition:.15s;
+  text-decoration:none;
+}
+.nav-item:hover{background:var(--glass);color:var(--text)}
+.nav-item.active{background:rgba(0,212,170,.12);color:var(--accent)}
+.nav-item .icon{font-size:15px;width:18px;text-align:center}
+/* ── Main ── */
+#main{margin-left:220px;flex:1;padding:28px;max-width:900px}
+#topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+#topbar h1{font-size:20px;font-weight:700}
+#save-btn{
+  background:var(--accent);color:#000;border:none;padding:10px 22px;
+  border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:.15s;
+}
+#save-btn:hover{opacity:.85}
+#save-btn:active{transform:scale(.97)}
+/* ── Cards / Sections ── */
+.section{display:none;animation:fadeIn .2s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-bottom:18px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title span{font-size:18px}
+/* ── Form elements ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid.cols-1{grid-template-columns:1fr}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr}#sidebar{width:180px}#main{margin-left:180px}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:var(--muted);font-weight:500}
+.field input,.field select,.field textarea{
+  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  padding:9px 12px;border-radius:6px;font-size:13px;outline:none;width:100%;
+  font-family:'Inter',sans-serif;transition:.15s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:70px}
+.field select option{background:var(--bg3)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:36px}
+.pw-wrap .eye{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  cursor:pointer;color:var(--muted);font-size:15px;user-select:none;
+}
+/* ── Toggle ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;
+  border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:13px;font-weight:500}
+.toggle-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{
+  position:absolute;inset:0;background:var(--bg3);border-radius:22px;
+  cursor:pointer;transition:.2s;border:1px solid var(--border);
+}
+.toggle-slider:before{
+  content:"";position:absolute;width:16px;height:16px;background:#666;
+  border-radius:50%;top:2px;left:2px;transition:.2s;
+}
+.toggle input:checked + .toggle-slider{background:var(--accent);border-color:var(--accent)}
+.toggle input:checked + .toggle-slider:before{transform:translateX(18px);background:#000}
+/* ── Channel blocks ── */
+.channel-block{margin-top:14px}
+.channel-fields{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+/* ── Toast ── */
+#toast{
+  position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;padding:12px 18px;font-size:13px;display:none;align-items:center;gap:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:100;max-width:320px;
+}
+#toast.ok{border-color:var(--success);color:var(--success)}
+#toast.err{border-color:var(--danger);color:var(--danger)}
+/* ── Badges ── */
+.badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;margin-left:6px}
+.badge.on{background:rgba(63,185,80,.15);color:var(--success);border:1px solid rgba(63,185,80,.3)}
+.badge.off{background:rgba(139,148,158,.1);color:var(--muted);border:1px solid var(--border)}
+/* ── Provider cards ── */
+.provider-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.provider-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;
+  cursor:pointer;transition:.15s;
+}
+.provider-card:hover{border-color:var(--accent2)}
+.provider-card.has-key{border-color:var(--success)}
+.provider-name{font-size:13px;font-weight:600;margin-bottom:4px}
+.provider-status{font-size:11px;color:var(--muted)}
+/* ── Help text ── */
+.hint{font-size:11px;color:var(--muted);margin-top:4px}
+a{color:var(--accent2);text-decoration:none}a:hover{text-decoration:underline}
+hr.sep{border:none;border-top:1px solid var(--border);margin:18px 0}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div id="logo">
+    <span>🤖</span>
+    <div><h2>MOBOT</h2><p id="ver-label">v0.1.0</p></div>
+  </div>
+  <div class="nav-section">Setup</div>
+  <a class="nav-item active" data-section="provider" onclick="nav(this)"><span class="icon">🧠</span>LLM Provider</a>
+  <a class="nav-item" data-section="agent" onclick="nav(this)"><span class="icon">⚙️</span>Agent</a>
+  <a class="nav-item" data-section="android" onclick="nav(this)"><span class="icon">📱</span>Android</a>
+  <div class="nav-section">Channels</div>
+  <a class="nav-item" data-section="telegram" onclick="nav(this)"><span class="icon">✈️</span>Telegram <span id="badge-telegram" class="badge off">off</span></a>
+  <a class="nav-item" data-section="discord" onclick="nav(this)"><span class="icon">🎮</span>Discord <span id="badge-discord" class="badge off">off</span></a>
+  <a class="nav-item" data-section="whatsapp" onclick="nav(this)"><span class="icon">💬</span>WhatsApp <span id="badge-whatsapp" class="badge off">off</span></a>
+  <a class="nav-item" data-section="slack" onclick="nav(this)"><span class="icon">💼</span>Slack <span id="badge-slack" class="badge off">off</span></a>
+  <a class="nav-item" data-section="email" onclick="nav(this)"><span class="icon">📧</span>Email <span id="badge-email" class="badge off">off</span></a>
+  <a class="nav-item" data-section="dingtalk" onclick="nav(this)"><span class="icon">🔔</span>DingTalk <span id="badge-dingtalk" class="badge off">off</span></a>
+  <a class="nav-item" data-section="feishu" onclick="nav(this)"><span class="icon">🐦</span>Feishu <span id="badge-feishu" class="badge off">off</span></a>
+  <a class="nav-item" data-section="qq" onclick="nav(this)"><span class="icon">🐧</span>QQ <span id="badge-qq" class="badge off">off</span></a>
+  <a class="nav-item" data-section="matrix" onclick="nav(this)"><span class="icon">🔷</span>Matrix <span id="badge-matrix" class="badge off">off</span></a>
+</nav>
+
+<!-- MAIN -->
+<main id="main">
+  <div id="topbar">
+    <div>
+      <h1>MOBOT Configuration</h1>
+      <p style="font-size:12px;color:var(--muted);margin-top:3px" id="config-path-label">Loading...</p>
+    </div>
+    <button id="save-btn" onclick="saveConfig()">💾 Save Config</button>
+  </div>
+
+  <!-- ── PROVIDER ── -->
+  <div id="section-provider" class="section active">
+    <div class="card">
+      <div class="card-title"><span>🧠</span>LLM Provider &amp; Model</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Default Model</label>
+          <input id="model" placeholder="e.g. openrouter/google/gemini-2.0-flash-001">
+          <div class="hint">Format: <code>provider/model-name</code></div>
+        </div>
+        <div class="field">
+          <label>Provider Override</label>
+          <select id="provider-override">
+            <option value="auto">auto (detect from model name)</option>
+            <option value="openrouter">openrouter</option>
+            <option value="anthropic">anthropic</option>
+            <option value="openai">openai</option>
+            <option value="gemini">gemini</option>
+            <option value="deepseek">deepseek</option>
+            <option value="groq">groq</option>
+            <option value="custom">custom</option>
+            <option value="vllm">vllm (local)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🔑</span>API Keys</div>
+      <p class="hint" style="margin-bottom:16px">Set keys for any provider you want to use. Only providers with keys are active.</p>
+      <div class="form-grid">
+        <div class="field"><label>OpenRouter <a href="https://openrouter.ai/keys" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-openrouter" type="password" placeholder="sk-or-v1-...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>Anthropic <a href="https://console.anthropic.com" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-anthropic" type="password" placeholder="sk-ant-...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>OpenAI <a href="https://platform.openai.com" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-openai" type="password" placeholder="sk-...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>Gemini <a href="https://aistudio.google.com" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-gemini" type="password" placeholder="AIza...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>DeepSeek <a href="https://platform.deepseek.com" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-deepseek" type="password" placeholder="sk-...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>Groq <a href="https://console.groq.com" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-groq" type="password" placeholder="gsk_...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>Custom API Base</label>
+          <input id="base-custom" placeholder="http://localhost:8000/v1"></div>
+        <div class="field"><label>Custom API Key</label>
+          <div class="pw-wrap"><input id="key-custom" type="password" placeholder="any value for local">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        <div class="field"><label>Brave Search (web tool) <a href="https://brave.com/search/api/" target="_blank">↗</a></label>
+          <div class="pw-wrap"><input id="key-brave" type="password" placeholder="BSA...">
+          <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AGENT ── -->
+  <div id="section-agent" class="section">
+    <div class="card">
+      <div class="card-title"><span>⚙️</span>Agent Settings</div>
+      <div class="form-grid">
+        <div class="field"><label>Max Tokens</label><input id="max-tokens" type="number" min="1024" max="65536" placeholder="8192"></div>
+        <div class="field"><label>Temperature</label><input id="temperature" type="number" min="0" max="2" step="0.05" placeholder="0.1"></div>
+        <div class="field"><label>Max Tool Iterations</label><input id="max-iter" type="number" min="1" max="200" placeholder="40"></div>
+        <div class="field"><label>Memory Window (messages)</label><input id="mem-window" type="number" min="10" max="500" placeholder="100"></div>
+        <div class="field"><label>Workspace Dir</label><input id="workspace" placeholder="~/.mobot/workspace"></div>
+        <div class="field"><label>Reasoning Effort</label>
+          <select id="reasoning-effort">
+            <option value="">none (standard)</option>
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>🛡️</span>Security</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Restrict to Workspace</div>
+          <div class="toggle-desc">Sandbox all file/shell tools to workspace dir</div></div>
+        <label class="toggle"><input id="restrict-ws" type="checkbox"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ANDROID ── -->
+  <div id="section-android" class="section">
+    <div class="card">
+      <div class="card-title"><span>📱</span>Android Device Control</div>
+      <div class="form-grid">
+        <div class="field"><label>Control Mode</label>
+          <select id="android-mode">
+            <option value="auto">auto (detect Termux or ADB)</option>
+            <option value="termux">termux (running on-device)</option>
+            <option value="adb">adb (controlling from PC)</option>
+          </select>
+        </div>
+        <div class="field"><label>Screenshots Directory</label>
+          <input id="android-screenshots" placeholder="/sdcard/DCIM/MOBOT"></div>
+        <div class="field"><label>ADB Host</label><input id="adb-host" placeholder="localhost"></div>
+        <div class="field"><label>ADB Port</label><input id="adb-port" type="number" placeholder="5037"></div>
+        <div class="field"><label>ADB Serial (optional)</label><input id="adb-serial" placeholder="leave empty for default"></div>
+      </div>
+      <hr class="sep">
+      <div class="toggle-row">
+        <div><div class="toggle-label">Termux:API Integration</div>
+          <div class="toggle-desc">Use termux-screenshot, termux-share etc. when available</div></div>
+        <label class="toggle"><input id="termux-api" type="checkbox"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TELEGRAM ── -->
+  <div id="section-telegram" class="section">
+    <div class="card">
+      <div class="card-title"><span>✈️</span>Telegram</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable Telegram</div>
+          <div class="toggle-desc">Get a bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a></div></div>
+        <label class="toggle"><input id="tg-enabled" type="checkbox" onchange="updateBadge('telegram',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>Bot Token</label>
+            <div class="pw-wrap"><input id="tg-token" type="password" placeholder="1234567890:ABC...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>Allowed User IDs <span class="hint">(comma-separated, * = all)</span></label>
+            <input id="tg-allowfrom" placeholder="123456789, 987654321"></div>
+          <div class="field"><label>Proxy (optional)</label><input id="tg-proxy" placeholder="socks5://127.0.0.1:1080"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DISCORD ── -->
+  <div id="section-discord" class="section">
+    <div class="card">
+      <div class="card-title"><span>🎮</span>Discord</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable Discord</div>
+          <div class="toggle-desc">Create a bot at <a href="https://discord.com/developers/applications" target="_blank">discord.com/developers</a></div></div>
+        <label class="toggle"><input id="dc-enabled" type="checkbox" onchange="updateBadge('discord',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>Bot Token</label>
+            <div class="pw-wrap"><input id="dc-token" type="password" placeholder="MTI...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>Allowed User IDs <span class="hint">(comma-separated, * = all)</span></label>
+            <input id="dc-allowfrom" placeholder="123456789012345678"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WHATSAPP ── -->
+  <div id="section-whatsapp" class="section">
+    <div class="card">
+      <div class="card-title"><span>💬</span>WhatsApp</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable WhatsApp</div>
+          <div class="toggle-desc">Requires Node.js ≥18. Run <code>mobot channels login</code> to scan QR.</div></div>
+        <label class="toggle"><input id="wa-enabled" type="checkbox" onchange="updateBadge('whatsapp',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>Bridge URL</label><input id="wa-bridge" placeholder="ws://localhost:3001"></div>
+          <div class="field"><label>Allowed Phone Numbers <span class="hint">(comma-separated, * = all)</span></label>
+            <input id="wa-allowfrom" placeholder="+1234567890, +9876543210"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SLACK ── -->
+  <div id="section-slack" class="section">
+    <div class="card">
+      <div class="card-title"><span>💼</span>Slack</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable Slack</div>
+          <div class="toggle-desc">Create an app at <a href="https://api.slack.com/apps" target="_blank">api.slack.com/apps</a></div></div>
+        <label class="toggle"><input id="sl-enabled" type="checkbox" onchange="updateBadge('slack',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>Bot Token (xoxb-...)</label>
+            <div class="pw-wrap"><input id="sl-bot" type="password" placeholder="xoxb-...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>App Token (xapp-...)</label>
+            <div class="pw-wrap"><input id="sl-app" type="password" placeholder="xapp-...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>Allowed User IDs</label><input id="sl-allowfrom" placeholder="U01234ABCD"></div>
+          <div class="field"><label>Group Policy</label>
+            <select id="sl-policy">
+              <option value="mention">mention (respond only when @mentioned)</option>
+              <option value="open">open (respond to all channel messages)</option>
+              <option value="allowlist">allowlist (specific channels only)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── EMAIL ── -->
+  <div id="section-email" class="section">
+    <div class="card">
+      <div class="card-title"><span>📧</span>Email (IMAP/SMTP)</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable Email</div>
+          <div class="toggle-desc">Give MOBOT its own email account — use a <a href="https://myaccount.google.com/apppasswords" target="_blank">Gmail App Password</a></div></div>
+        <label class="toggle"><input id="em-enabled" type="checkbox" onchange="updateBadge('email',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Consent Granted</div>
+          <div class="toggle-desc">Required — confirms you allow MOBOT to access this mailbox</div></div>
+        <label class="toggle"><input id="em-consent" type="checkbox"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>From Address</label><input id="em-from" type="email" placeholder="my-mobot@gmail.com"></div>
+          <div class="field"><label>Allowed Senders <span class="hint">(comma-separated, * = all)</span></label>
+            <input id="em-allowfrom" placeholder="you@gmail.com"></div>
+          <div class="field"><label>IMAP Host</label><input id="imap-host" placeholder="imap.gmail.com"></div>
+          <div class="field"><label>IMAP Port</label><input id="imap-port" type="number" placeholder="993"></div>
+          <div class="field"><label>IMAP Username</label><input id="imap-user" placeholder="my-mobot@gmail.com"></div>
+          <div class="field"><label>IMAP Password</label>
+            <div class="pw-wrap"><input id="imap-pass" type="password" placeholder="app-password">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>SMTP Host</label><input id="smtp-host" placeholder="smtp.gmail.com"></div>
+          <div class="field"><label>SMTP Port</label><input id="smtp-port" type="number" placeholder="587"></div>
+          <div class="field"><label>SMTP Username</label><input id="smtp-user" placeholder="my-mobot@gmail.com"></div>
+          <div class="field"><label>SMTP Password</label>
+            <div class="pw-wrap"><input id="smtp-pass" type="password" placeholder="app-password">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DINGTALK ── -->
+  <div id="section-dingtalk" class="section">
+    <div class="card">
+      <div class="card-title"><span>🔔</span>DingTalk</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable DingTalk</div>
+          <div class="toggle-desc">Create a bot at <a href="https://open-dev.dingtalk.com" target="_blank">open-dev.dingtalk.com</a>, enable Stream Mode.</div></div>
+        <label class="toggle"><input id="dt-enabled" type="checkbox" onchange="updateBadge('dingtalk',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>Client ID (AppKey)</label><input id="dt-id" placeholder="dingXXXXXX"></div>
+          <div class="field"><label>Client Secret (AppSecret)</label>
+            <div class="pw-wrap"><input id="dt-secret" type="password" placeholder="XXX...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field cols-1"><label>Allowed Staff IDs</label><input id="dt-allowfrom" placeholder="staff_id_1, staff_id_2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FEISHU ── -->
+  <div id="section-feishu" class="section">
+    <div class="card">
+      <div class="card-title"><span>🐦</span>Feishu / Lark</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable Feishu</div>
+          <div class="toggle-desc">Create a bot at <a href="https://open.feishu.cn/app" target="_blank">open.feishu.cn</a></div></div>
+        <label class="toggle"><input id="fs-enabled" type="checkbox" onchange="updateBadge('feishu',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>App ID</label><input id="fs-id" placeholder="cli_XXXXXXXX"></div>
+          <div class="field"><label>App Secret</label>
+            <div class="pw-wrap"><input id="fs-secret" type="password" placeholder="XXX...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>Allowed Open IDs</label><input id="fs-allowfrom" placeholder="ou_XXXXXXXX"></div>
+          <div class="field"><label>Encrypt Key (optional)</label>
+            <div class="pw-wrap"><input id="fs-encrypt" type="password" placeholder="">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QQ ── -->
+  <div id="section-qq" class="section">
+    <div class="card">
+      <div class="card-title"><span>🐧</span>QQ</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable QQ</div>
+          <div class="toggle-desc">Register at <a href="https://q.qq.com" target="_blank">q.qq.com</a></div></div>
+        <label class="toggle"><input id="qq-enabled" type="checkbox" onchange="updateBadge('qq',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>App ID</label><input id="qq-id" placeholder="1234567890"></div>
+          <div class="field"><label>App Secret</label>
+            <div class="pw-wrap"><input id="qq-secret" type="password" placeholder="XXX...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>Allowed Open IDs</label><input id="qq-allowfrom" placeholder="* or openid1, openid2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MATRIX ── -->
+  <div id="section-matrix" class="section">
+    <div class="card">
+      <div class="card-title"><span>🔷</span>Matrix / Element</div>
+      <div class="toggle-row">
+        <div><div class="toggle-label">Enable Matrix</div>
+          <div class="toggle-desc">Works with any Matrix homeserver (matrix.org, Element, etc.)</div></div>
+        <label class="toggle"><input id="mx-enabled" type="checkbox" onchange="updateBadge('matrix',this.checked)"><span class="toggle-slider"></span></label>
+      </div>
+      <div class="channel-fields">
+        <div class="form-grid">
+          <div class="field"><label>Homeserver</label><input id="mx-hs" placeholder="https://matrix.org"></div>
+          <div class="field"><label>User ID</label><input id="mx-user" placeholder="@mobot:matrix.org"></div>
+          <div class="field"><label>Access Token</label>
+            <div class="pw-wrap"><input id="mx-token" type="password" placeholder="syt_...">
+            <span class="eye" onclick="togglePw(this)">👁</span></div></div>
+          <div class="field"><label>Device ID</label><input id="mx-device" placeholder="MOBOT01"></div>
+          <div class="field"><label>Allowed Users</label><input id="mx-allowfrom" placeholder="@you:matrix.org"></div>
+          <div class="field"><label>Group Policy</label>
+            <select id="mx-policy">
+              <option value="open">open</option>
+              <option value="mention">mention</option>
+              <option value="allowlist">allowlist</option>
+            </select>
+          </div>
+        </div>
+        <div class="toggle-row" style="margin-top:12px">
+          <div><div class="toggle-label">E2EE Encryption</div></div>
+          <label class="toggle"><input id="mx-e2ee" type="checkbox"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ── Config state ──────────────────────────────────────────────────────────
+let CFG = {};
+
+async function loadConfig() {
+  try {
+    const [cfgRes, statusRes] = await Promise.all([
+      fetch('/api/config'), fetch('/api/status')
+    ]);
+    CFG = await cfgRes.json();
+    const status = await statusRes.json();
+    document.getElementById('ver-label').textContent = 'v' + status.version;
+    document.getElementById('config-path-label').textContent = '📁 ' + status.config_path;
+    populateUI();
+  } catch(e) {
+    toast('Failed to load config: ' + e, 'err');
+  }
+}
+
+function get(path, def='') {
+  return path.split('.').reduce((o,k) => (o && o[k] !== undefined ? o[k] : null), CFG) ?? def;
+}
+function arr2str(v) { return Array.isArray(v) ? v.join(', ') : (v || ''); }
+function str2arr(v) { return v.split(',').map(s=>s.trim()).filter(Boolean); }
+function val(id) { return document.getElementById(id)?.value ?? ''; }
+function setVal(id, v) { const el=document.getElementById(id); if(el) el.value = v??''; }
+function setChk(id, v) { const el=document.getElementById(id); if(el) el.checked = !!v; }
+function chk(id) { return document.getElementById(id)?.checked ?? false; }
+
+function populateUI() {
+  // Provider / model
+  setVal('model', get('agents.defaults.model'));
+  setVal('provider-override', get('agents.defaults.provider', 'auto'));
+  setVal('key-openrouter', get('providers.openrouter.apiKey'));
+  setVal('key-anthropic', get('providers.anthropic.apiKey'));
+  setVal('key-openai', get('providers.openai.apiKey'));
+  setVal('key-gemini', get('providers.gemini.apiKey'));
+  setVal('key-deepseek', get('providers.deepseek.apiKey'));
+  setVal('key-groq', get('providers.groq.apiKey'));
+  setVal('key-custom', get('providers.custom.apiKey'));
+  setVal('base-custom', get('providers.custom.apiBase'));
+  setVal('key-brave', get('tools.web.search.apiKey'));
+  // Agent
+  setVal('max-tokens', get('agents.defaults.maxTokens', 8192));
+  setVal('temperature', get('agents.defaults.temperature', 0.1));
+  setVal('max-iter', get('agents.defaults.maxToolIterations', 40));
+  setVal('mem-window', get('agents.defaults.memoryWindow', 100));
+  setVal('workspace', get('agents.defaults.workspace', '~/.mobot/workspace'));
+  setVal('reasoning-effort', get('agents.defaults.reasoningEffort') || '');
+  setChk('restrict-ws', get('tools.restrictToWorkspace', false));
+  // Android
+  setVal('android-mode', get('android.mode', 'auto'));
+  setVal('android-screenshots', get('android.screenshotsDir', '/sdcard/DCIM/MOBOT'));
+  setVal('adb-host', get('android.adbHost', 'localhost'));
+  setVal('adb-port', get('android.adbPort', 5037));
+  setVal('adb-serial', get('android.adbSerial', ''));
+  setChk('termux-api', get('android.termuxApi', true));
+  // Telegram
+  const tgOn = get('channels.telegram.enabled', false);
+  setChk('tg-enabled', tgOn); updateBadge('telegram', tgOn);
+  setVal('tg-token', get('channels.telegram.token'));
+  setVal('tg-allowfrom', arr2str(get('channels.telegram.allowFrom', [])));
+  setVal('tg-proxy', get('channels.telegram.proxy') || '');
+  // Discord
+  const dcOn = get('channels.discord.enabled', false);
+  setChk('dc-enabled', dcOn); updateBadge('discord', dcOn);
+  setVal('dc-token', get('channels.discord.token'));
+  setVal('dc-allowfrom', arr2str(get('channels.discord.allowFrom', [])));
+  // WhatsApp
+  const waOn = get('channels.whatsapp.enabled', false);
+  setChk('wa-enabled', waOn); updateBadge('whatsapp', waOn);
+  setVal('wa-bridge', get('channels.whatsapp.bridgeUrl', 'ws://localhost:3001'));
+  setVal('wa-allowfrom', arr2str(get('channels.whatsapp.allowFrom', [])));
+  // Slack
+  const slOn = get('channels.slack.enabled', false);
+  setChk('sl-enabled', slOn); updateBadge('slack', slOn);
+  setVal('sl-bot', get('channels.slack.botToken'));
+  setVal('sl-app', get('channels.slack.appToken'));
+  setVal('sl-allowfrom', arr2str(get('channels.slack.allowFrom', [])));
+  setVal('sl-policy', get('channels.slack.groupPolicy', 'mention'));
+  // Email
+  const emOn = get('channels.email.enabled', false);
+  setChk('em-enabled', emOn); updateBadge('email', emOn);
+  setChk('em-consent', get('channels.email.consentGranted', false));
+  setVal('em-from', get('channels.email.fromAddress'));
+  setVal('em-allowfrom', arr2str(get('channels.email.allowFrom', [])));
+  setVal('imap-host', get('channels.email.imapHost', 'imap.gmail.com'));
+  setVal('imap-port', get('channels.email.imapPort', 993));
+  setVal('imap-user', get('channels.email.imapUsername'));
+  setVal('imap-pass', get('channels.email.imapPassword'));
+  setVal('smtp-host', get('channels.email.smtpHost', 'smtp.gmail.com'));
+  setVal('smtp-port', get('channels.email.smtpPort', 587));
+  setVal('smtp-user', get('channels.email.smtpUsername'));
+  setVal('smtp-pass', get('channels.email.smtpPassword'));
+  // DingTalk
+  const dtOn = get('channels.dingtalk.enabled', false);
+  setChk('dt-enabled', dtOn); updateBadge('dingtalk', dtOn);
+  setVal('dt-id', get('channels.dingtalk.clientId'));
+  setVal('dt-secret', get('channels.dingtalk.clientSecret'));
+  setVal('dt-allowfrom', arr2str(get('channels.dingtalk.allowFrom', [])));
+  // Feishu
+  const fsOn = get('channels.feishu.enabled', false);
+  setChk('fs-enabled', fsOn); updateBadge('feishu', fsOn);
+  setVal('fs-id', get('channels.feishu.appId'));
+  setVal('fs-secret', get('channels.feishu.appSecret'));
+  setVal('fs-allowfrom', arr2str(get('channels.feishu.allowFrom', [])));
+  setVal('fs-encrypt', get('channels.feishu.encryptKey') || '');
+  // QQ
+  const qqOn = get('channels.qq.enabled', false);
+  setChk('qq-enabled', qqOn); updateBadge('qq', qqOn);
+  setVal('qq-id', get('channels.qq.appId'));
+  setVal('qq-secret', get('channels.qq.secret'));
+  setVal('qq-allowfrom', arr2str(get('channels.qq.allowFrom', [])));
+  // Matrix
+  const mxOn = get('channels.matrix.enabled', false);
+  setChk('mx-enabled', mxOn); updateBadge('matrix', mxOn);
+  setVal('mx-hs', get('channels.matrix.homeserver', 'https://matrix.org'));
+  setVal('mx-user', get('channels.matrix.userId'));
+  setVal('mx-token', get('channels.matrix.accessToken'));
+  setVal('mx-device', get('channels.matrix.deviceId'));
+  setVal('mx-allowfrom', arr2str(get('channels.matrix.allowFrom', [])));
+  setVal('mx-policy', get('channels.matrix.groupPolicy', 'open'));
+  setChk('mx-e2ee', get('channels.matrix.e2eeEnabled', true));
+}
+
+function buildConfig() {
+  return {
+    agents: { defaults: {
+      model: val('model') || 'openrouter/google/gemini-2.0-flash-001',
+      provider: val('provider-override') || 'auto',
+      maxTokens: parseInt(val('max-tokens')) || 8192,
+      temperature: parseFloat(val('temperature')) || 0.1,
+      maxToolIterations: parseInt(val('max-iter')) || 40,
+      memoryWindow: parseInt(val('mem-window')) || 100,
+      workspace: val('workspace') || '~/.mobot/workspace',
+      reasoningEffort: val('reasoning-effort') || null,
+    }},
+    providers: {
+      openrouter: { apiKey: val('key-openrouter') },
+      anthropic:  { apiKey: val('key-anthropic') },
+      openai:     { apiKey: val('key-openai') },
+      gemini:     { apiKey: val('key-gemini') },
+      deepseek:   { apiKey: val('key-deepseek') },
+      groq:       { apiKey: val('key-groq') },
+      custom:     { apiKey: val('key-custom'), apiBase: val('base-custom') || null },
+    },
+    tools: {
+      restrictToWorkspace: chk('restrict-ws'),
+      web: { search: { apiKey: val('key-brave') } },
+      exec: get('tools.exec') || {},
+      mcpServers: get('tools.mcpServers') || {},
+    },
+    android: {
+      mode: val('android-mode') || 'auto',
+      screenshotsDir: val('android-screenshots') || '/sdcard/DCIM/MOBOT',
+      adbHost: val('adb-host') || 'localhost',
+      adbPort: parseInt(val('adb-port')) || 5037,
+      adbSerial: val('adb-serial') || '',
+      termuxApi: chk('termux-api'),
+    },
+    channels: {
+      sendProgress: get('channels.sendProgress', true),
+      sendToolHints: get('channels.sendToolHints', false),
+      telegram: {
+        enabled: chk('tg-enabled'),
+        token: val('tg-token'),
+        allowFrom: str2arr(val('tg-allowfrom')),
+        proxy: val('tg-proxy') || null,
+      },
+      discord: {
+        enabled: chk('dc-enabled'),
+        token: val('dc-token'),
+        allowFrom: str2arr(val('dc-allowfrom')),
+      },
+      whatsapp: {
+        enabled: chk('wa-enabled'),
+        bridgeUrl: val('wa-bridge') || 'ws://localhost:3001',
+        allowFrom: str2arr(val('wa-allowfrom')),
+      },
+      slack: {
+        enabled: chk('sl-enabled'),
+        botToken: val('sl-bot'),
+        appToken: val('sl-app'),
+        allowFrom: str2arr(val('sl-allowfrom')),
+        groupPolicy: val('sl-policy') || 'mention',
+      },
+      email: {
+        enabled: chk('em-enabled'),
+        consentGranted: chk('em-consent'),
+        fromAddress: val('em-from'),
+        allowFrom: str2arr(val('em-allowfrom')),
+        imapHost: val('imap-host') || 'imap.gmail.com',
+        imapPort: parseInt(val('imap-port')) || 993,
+        imapUsername: val('imap-user'),
+        imapPassword: val('imap-pass'),
+        smtpHost: val('smtp-host') || 'smtp.gmail.com',
+        smtpPort: parseInt(val('smtp-port')) || 587,
+        smtpUsername: val('smtp-user'),
+        smtpPassword: val('smtp-pass'),
+      },
+      dingtalk: {
+        enabled: chk('dt-enabled'),
+        clientId: val('dt-id'),
+        clientSecret: val('dt-secret'),
+        allowFrom: str2arr(val('dt-allowfrom')),
+      },
+      feishu: {
+        enabled: chk('fs-enabled'),
+        appId: val('fs-id'),
+        appSecret: val('fs-secret'),
+        allowFrom: str2arr(val('fs-allowfrom')),
+        encryptKey: val('fs-encrypt') || '',
+      },
+      qq: {
+        enabled: chk('qq-enabled'),
+        appId: val('qq-id'),
+        secret: val('qq-secret'),
+        allowFrom: str2arr(val('qq-allowfrom')),
+      },
+      matrix: {
+        enabled: chk('mx-enabled'),
+        homeserver: val('mx-hs') || 'https://matrix.org',
+        userId: val('mx-user'),
+        accessToken: val('mx-token'),
+        deviceId: val('mx-device'),
+        allowFrom: str2arr(val('mx-allowfrom')),
+        groupPolicy: val('mx-policy') || 'open',
+        e2eeEnabled: chk('mx-e2ee'),
+      },
+      mochat: get('channels.mochat') || { enabled: false },
+    },
+    gateway: get('gateway') || {},
+  };
+}
+
+async function saveConfig() {
+  const btn = document.getElementById('save-btn');
+  btn.textContent = '⏳ Saving...'; btn.disabled = true;
+  try {
+    const res = await fetch('/api/config', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(buildConfig())
+    });
+    const data = await res.json();
+    if (data.ok) { toast('✓ Config saved!', 'ok'); CFG = buildConfig(); }
+    else throw new Error(data.message);
+  } catch(e) {
+    toast('Error: ' + e.message, 'err');
+  } finally {
+    btn.textContent = '💾 Save Config'; btn.disabled = false;
+  }
+}
+
+// ── UI Helpers ────────────────────────────────────────────────────────────
+function nav(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  const sec = el.dataset.section;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + sec).classList.add('active');
+}
+
+function updateBadge(ch, on) {
+  const b = document.getElementById('badge-' + ch);
+  if (!b) return;
+  b.textContent = on ? 'on' : 'off';
+  b.className = 'badge ' + (on ? 'on' : 'off');
+}
+
+function togglePw(eye) {
+  const inp = eye.parentElement.querySelector('input');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  eye.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = type; t.style.display = 'flex';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+loadConfig();
+</script>
+</body>
+</html>

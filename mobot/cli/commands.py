@@ -189,13 +189,31 @@ def onboard():
 
     console.print(f"\n{__logo__} mobot is ready!")
     console.print("\nNext steps:")
-    console.print("  1. Add your API key to [cyan]~/.mobot/config.json[/cyan]")
-    console.print("     Get one at: https://openrouter.ai/keys")
+    console.print("  1. Configure via web UI: [cyan]mobot web[/cyan]  ← easiest!")
+    console.print("     Or edit manually: [cyan]~/.mobot/config.json[/cyan]")
+    console.print("     Get a free API key at: https://openrouter.ai/keys")
     console.print("  2. Chat: [cyan]mobot agent -m \"Hello!\"[/cyan]")
     console.print("\n[dim]Want Android control? Run: [cyan]mobot android setup[/cyan][/dim]")
-    console.print("[dim]Want Telegram/WhatsApp? See: https://github.com/HKUDS/nanobot#-chat-apps[/dim]")
+    console.print("[dim]Want Telegram/WhatsApp? Run: [cyan]mobot web[/cyan] to configure channels[/dim]")
 
 
+@app.command()
+def web(
+    port: int = typer.Option(7891, "--port", "-p", help="Port to listen on"),
+    no_open: bool = typer.Option(False, "--no-open", help="Don't auto-open browser (print URL only)"),
+    host: str = typer.Option("127.0.0.1", "--host", help="Host to bind (use 0.0.0.0 for LAN access)"),
+):
+    """Launch the MOBOT web configuration UI in your browser.
+
+    Opens a beautiful dashboard to configure LLM providers, all chat
+    channels (Telegram, Discord, WhatsApp, Slack, Email, DingTalk,
+    Feishu, QQ, Matrix), Android settings, and agent options.
+
+    On Android / Termux: run this command, then open
+    http://localhost:7891 in your phone's browser.
+    """
+    from mobot.web.server import run as run_web
+    run_web(port=port, open_browser=not no_open, host=host)
 
 
 
