@@ -86,9 +86,12 @@ def _stream_whatsapp_login(wfile, flush_fn):
     bridge_dir = _get_bridge_dir()
     if not bridge_dir:
         sse("error", (
-            "WhatsApp bridge not found.\n"
-            "Run this command first, then retry:\n\n"
-            "  mobot channels setup\n\n"
+            "WhatsApp bridge source not found.\n"
+            "This usually means the package is not fully installed.\n\n"
+            "Try reinstalling:\n"
+            "  pip install -e . --force-reinstall\n\n"
+            "Or use the CLI to set up and scan QR in terminal:\n"
+            "  mobot channels login\n\n"
             "(Requires Node.js ≥ 18 — https://nodejs.org)"
         ))
         sse("done", "failed")
