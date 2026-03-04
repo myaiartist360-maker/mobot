@@ -52,19 +52,22 @@ def _index_html() -> str:
 
 
 def _get_bridge_dir() -> Path | None:
-    """Find the WhatsApp bridge directory (same logic as CLI)."""
-    data_dir = Path.home() / ".mobot"
-    user_bridge = data_dir / "whatsapp-bridge"
-    if user_bridge.exists():
+    """Find the WhatsApp bridge directory — mirrors CLI logic exactly."""
+    # Primary: user's built bridge
+    user_bridge = Path.home() / ".mobot" / "bridge"
+    if (user_bridge / "dist" / "index.js").exists():
         return user_bridge
-    # Try bundled location
-    try:
-        import importlib.resources as ir
-        src = Path(str(ir.files("mobot"))) / "channels" / "whatsapp-bridge"
-        if src.exists():
-            return src
-    except Exception:
-        pass
+
+    # Fallback: package-installed bridge (unbuilt — npm start should still work)
+    pkg_bridge = Path(__file__).parent.parent / "bridge"
+    if (pkg_bridge / "package.json").exists():
+        return pkg_bridge
+
+    # Dev/repo root fallback
+    src_bridge = Path(__file__).parent.parent.parent / "bridge"
+    if (src_bridge / "package.json").exists():
+        return src_bridge
+
     return None
 
 
@@ -82,9 +85,31 @@ def _stream_whatsapp_login(wfile, flush_fn):
 
     bridge_dir = _get_bridge_dir()
     if not bridge_dir:
-        sse("error", "WhatsApp bridge not found. Run: mobot channels setup")
+        sse("error", (
+            "WhatsApp bridge not found.\n"
+            "Run this command first, then retry:\n\n"
+            "  mobot channels setup\n\n"
+            "(Requires Node.js ≥ 18 — https://nodejs.org)"
+        ))
         sse("done", "failed")
         return
+
+    # If bridge exists but not yet built (no dist/index.js), build it first
+    if not (bridge_dir / "dist" / "index.js").exists():
+        sse("status", f"Building bridge at {bridge_dir} (this runs npm install + npm run build)...")
+        import shutil
+        if not shutil.which("npm"):
+            sse("error", "npm not found. Please install Node.js ≥ 18 (https://nodejs.org)")
+            sse("done", "failed")
+            return
+        try:
+            subprocess.run(["npm", "install"], cwd=str(bridge_dir), check=True, capture_output=True)
+            subprocess.run(["npm", "run", "build"], cwd=str(bridge_dir), check=True, capture_output=True)
+            sse("status", "Bridge built successfully. Starting login...")
+        except subprocess.CalledProcessError as e:
+            sse("error", f"Build failed: {e}")
+            sse("done", "failed")
+            return
 
     config = _load_raw()
     env = {**os.environ}
