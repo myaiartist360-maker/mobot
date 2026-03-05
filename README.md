@@ -1,64 +1,80 @@
 <div align="center">
-  <h1>🤖 MOBOT: Android-Friendly AI Assistant</h1>
+  <h1>🤖 MOBOT — Android-Friendly AI Assistant</h1>
   <p>
     <a href="https://github.com/myaiartist360-maker/mobot"><img src="https://img.shields.io/badge/GitHub-mobot-181717?style=flat&logo=github" alt="GitHub"></a>
     <img src="https://img.shields.io/badge/python-≥3.11-blue" alt="Python">
     <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
     <img src="https://img.shields.io/badge/Android-Termux-A4C639?style=flat&logo=android&logoColor=white" alt="Android">
-    <img src="https://img.shields.io/badge/ADB-Supported-00B0FF?style=flat" alt="ADB">
+    <img src="https://img.shields.io/badge/Ollama-Local_LLM-00d4aa?style=flat" alt="Ollama">
+    <img src="https://img.shields.io/badge/Web_UI-Built_In-6e40c9?style=flat" alt="Web UI">
   </p>
+  <p><em>Personal AI assistant for Android, Termux & PC — with a built-in browser-based setup UI</em></p>
 </div>
 
-🤖 **MOBOT** is an **Android-friendly personal AI assistant** forked from [NanoBot](https://github.com/HKUDS/nanobot). It runs directly on your Android device via **Termux** and can control your phone — launch apps, take screenshots, send email, navigate UI, and more.
+---
 
-⚡️ Ultra-lightweight: ~4,000 lines of core agent code, full LLM tool loop, persistent memory, and multi-channel support.
+**MOBOT** is an **Android-friendly personal AI assistant** forked from [NanoBot](https://github.com/HKUDS/nanobot). It runs directly on your Android device via **Termux**, can control your phone via ADB or Termux:API, and ships with a **beautiful web-based configuration UI** — no manual JSON editing needed.
 
-📱 **New in MOBOT**: Direct Android device control via ADB or Termux — no root required.
+⚡️ ~4,000 lines of core agent code · Multi-channel · MCP support · Runs on-device or on-PC
 
 ---
 
-## ✨ Key Features
+## ✨ What's New in MOBOT
 
-🤖 **Android Control**: Launch apps, tap/swipe, screenshot, send email, share files — all via natural language.
-
-🪶 **Ultra-Lightweight**: ~4,000 lines of core code. Easy to read, modify, and extend.
-
-⚡️ **Fast**: Minimal footprint means faster startup, lower memory, quicker responses.
-
-📱 **Termux Native**: Runs directly on your Android phone via Termux — no PC needed.
-
-🔌 **Multi-Channel**: Telegram, WhatsApp, Discord, Slack, Email, DingTalk, QQ, Feishu, Matrix.
-
-🛠️ **MCP Support**: Plug in any Model Context Protocol server as native agent tools.
+| Feature | Description |
+|---------|-------------|
+| 🌐 **`mobot web`** | Browser-based config UI — easiest way to set up MOBOT |
+| 📲 **WhatsApp QR in browser** | Scan WhatsApp QR code directly from the web UI |
+| 🦙 **Ollama local models** | Pick and configure locally-running Ollama models, no API key needed |
+| 📱 **Android control** | Tap, swipe, screenshot, launch apps — all via natural language |
+| 🔌 **9 chat channels** | Telegram, Discord, WhatsApp, Slack, Email, DingTalk, Feishu, QQ, Matrix |
 
 ---
 
-## 🏗️ Architecture
+## 🌐 Web Configuration UI
 
+Run `mobot web` to open a beautiful, mobile-friendly config dashboard in your browser.
+
+```bash
+mobot web          # → opens http://localhost:7891
+mobot web --port 8080
+mobot web --host 0.0.0.0   # expose on LAN (other devices on same Wi-Fi)
 ```
-Your Phone / PC
-     │
-     ▼
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
-│  Chat Apps  │────▶│  Agent Loop  │────▶│   LLM Provider  │
-│  Telegram   │     │  (mobot/)    │◀────│  OpenRouter/    │
-│  WhatsApp   │     └──────┬───────┘     │  Gemini/Claude  │
-│  CLI/Termux │            │             └─────────────────┘
-└─────────────┘     ┌──────▼───────┐
-                    │    Tools     │
-                    │ • android_control  ← NEW
-                    │ • exec / shell
-                    │ • web search
-                    │ • file system
-                    │ • cron / schedule
-                    └──────────────┘
-```
+
+> **On Android / Termux**: run `mobot web`, then open `http://localhost:7891` in your phone's browser. The UI is fully mobile-optimized.
+
+### LLM Provider · API Keys · Ollama Local Models
+
+![MOBOT Web UI — LLM Provider section](docs/web_provider.png)
+
+Set API keys for OpenRouter, Anthropic, OpenAI, Gemini, DeepSeek, Groq, or any custom endpoint — all with show/hide password toggles. No API key needed for Ollama.
+
+**🦙 Ollama local models:**
+1. Make sure Ollama is running: `ollama serve`
+2. In the web UI → LLM Provider → Ollama card → click **🔄 Fetch Models**
+3. Pick any model from the dropdown
+4. Click **✔ Use this model** — model name & API base are auto-filled
+5. Click **💾 Save Config** — done!
+
+### Agent Settings
+
+![MOBOT Web UI — Agent settings](docs/web_agent.png)
+
+Configure max tokens, temperature, memory window, workspace directory, and reasoning effort. Channel badges in the sidebar show what's enabled at a glance.
+
+### WhatsApp QR Onboarding
+
+![MOBOT Web UI — WhatsApp QR code scan](docs/web_whatsapp_qr.png)
+
+Click **📱 Connect WhatsApp (Show QR)** — MOBOT starts the bridge process and shows a scannable QR code directly in the browser. No terminal needed.
+
+> **WhatsApp requires Node.js ≥18.** Install it with `pkg install nodejs` on Termux.
 
 ---
 
 ## 📱 Android Control Capabilities
 
-MOBOT adds a new `android_control` tool with **13 actions**:
+MOBOT adds a powerful `android_control` tool with **13 actions**:
 
 | Action | What it does |
 |---|---|
@@ -101,10 +117,10 @@ pkg install git python python-pip termux-api -y
 # Grant storage access (for screenshots)
 termux-setup-storage
 
-# Clone and install from source (not on PyPI yet)
+# Clone and install from source
 git clone https://github.com/myaiartist360-maker/mobot.git
 cd mobot
-export ANDROID_API_LEVEL=24   # safety net for any Rust-based build tools
+export ANDROID_API_LEVEL=24   # safety net for Rust-based builds
 pip install -e .
 
 # Add mobot to PATH
@@ -119,7 +135,6 @@ mobot onboard
 ### 💻 On PC (control phone via ADB)
 
 ```bash
-# mobot-ai is not on PyPI yet — install from source
 git clone https://github.com/myaiartist360-maker/mobot.git
 cd mobot
 pip install -e .
@@ -130,12 +145,7 @@ mobot agent -m "take a screenshot of my phone"
 
 ---
 
-
 ## 🚀 Quick Start
-
-> [!TIP]
-> Set your API key in `~/.mobot/config.json`.
-> Get a free API key at [openrouter.ai/keys](https://openrouter.ai/keys) — many models need no credit card.
 
 **1. Initialize**
 
@@ -146,16 +156,15 @@ mobot onboard
 **2. Configure via Web UI** ← easiest!
 
 ```bash
-mobot web   # opens http://localhost:7891 in your browser
+mobot web   # opens http://localhost:7891 automatically
 ```
 
 The web UI lets you:
-- Set your LLM API key (OpenRouter, Anthropic, OpenAI, Gemini, etc.)
-- **Connect WhatsApp by scanning a QR code** directly in the browser
-- Enable and configure all channels (Telegram, Discord, Slack, Email, Matrix, DingTalk, Feishu, QQ)
-- Tune agent settings and Android options
-
-> On Android / Termux — just run `mobot web` and open `http://localhost:7891` in your phone's browser.
+- **Set LLM API key** (OpenRouter, Anthropic, OpenAI, Gemini, DeepSeek, Groq, or custom)
+- **Connect local Ollama models** (fetch model list live, no API key needed)
+- **Connect WhatsApp** by scanning QR code directly in the browser
+- **Enable all 9 chat channels** with toggle switches
+- **Tune agent settings** and Android options
 
 **Or configure manually** (`~/.mobot/config.json`)
 
@@ -174,6 +183,23 @@ The web UI lets you:
 }
 ```
 
+**For Ollama (no API key):**
+
+```json
+{
+  "providers": {
+    "custom": {
+      "apiBase": "http://localhost:11434/v1"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": "ollama/llama3.2"
+    }
+  }
+}
+```
+
 **3. Chat**
 
 ```bash
@@ -185,25 +211,31 @@ mobot agent
 ```bash
 mobot agent -m "list all my installed apps"
 mobot agent -m "open WhatsApp"
-mobot agent -m "take a screenshot and save it"
+mobot agent -m "take a screenshot and describe what you see"
 mobot agent -m "send an email to john@example.com saying I'll be late"
+```
+
+**5. Start gateway (for chat apps)**
+
+```bash
+mobot gateway
 ```
 
 ---
 
 ## 💬 Chat Apps
 
-Connect MOBOT to your favorite messaging platform.
+Configure any channel through the web UI (`mobot web`) or manually:
 
 | Channel | What you need |
 |---------|---------------|
 | **Telegram** | Bot token from @BotFather |
 | **Discord** | Bot token + Message Content intent |
-| **WhatsApp** | QR code scan (Node.js ≥18 required) |
-| **Feishu** | App ID + App Secret |
-| **DingTalk** | App Key + App Secret |
+| **WhatsApp** | QR code scan via web UI (Node.js ≥18 required) |
 | **Slack** | Bot token + App-Level token |
 | **Email** | IMAP/SMTP credentials |
+| **Feishu** | App ID + App Secret |
+| **DingTalk** | App Key + App Secret |
 | **QQ** | App ID + App Secret |
 | **Matrix** | Access token + homeserver |
 
@@ -211,10 +243,9 @@ Connect MOBOT to your favorite messaging platform.
 <summary><b>Telegram</b> (Recommended)</summary>
 
 **1. Create a bot**
-- Open Telegram, search `@BotFather`
-- Send `/newbot`, follow prompts, copy the token
+- Open Telegram → search `@BotFather` → `/newbot` → copy token
 
-**2. Configure** (`~/.mobot/config.json`)
+**2. Configure** (or use `mobot web`)
 
 ```json
 {
@@ -229,7 +260,6 @@ Connect MOBOT to your favorite messaging platform.
 ```
 
 **3. Run**
-
 ```bash
 mobot gateway
 ```
@@ -239,11 +269,17 @@ mobot gateway
 <details>
 <summary><b>WhatsApp</b></summary>
 
-Requires **Node.js ≥18**.
+Requires **Node.js ≥18** (`pkg install nodejs -y` on Termux).
 
+**Easiest — via web UI:**
 ```bash
-mobot channels login   # Scan QR code
-mobot gateway          # Start gateway
+mobot web   # → WhatsApp → Connect WhatsApp (Show QR)
+```
+
+**Or via terminal:**
+```bash
+mobot channels login   # Shows QR code in terminal
+mobot gateway          # Start gateway after scanning
 ```
 
 ```json
@@ -266,7 +302,7 @@ mobot gateway          # Start gateway
 
 **2.** Enable **MESSAGE CONTENT INTENT** in Bot settings
 
-**3. Configure:**
+**3.** Configure:
 ```json
 {
   "channels": {
@@ -279,7 +315,7 @@ mobot gateway          # Start gateway
 }
 ```
 
-**4. Run:** `mobot gateway`
+**4.** Run: `mobot gateway`
 
 </details>
 
@@ -311,33 +347,24 @@ Run: `mobot gateway`
 
 </details>
 
-<details>
-<summary><b>Slack, Feishu, DingTalk, QQ, Matrix</b></summary>
-
-These work the same as NanoBot — replace all `nanobot gateway` commands with `mobot gateway` and config paths from `~/.nanobot/` to `~/.mobot/`.
-
-Full channel documentation: see original [NanoBot README](https://github.com/HKUDS/nanobot#-chat-apps).
-
-</details>
-
 ---
 
 ## ⚙️ Configuration
 
-Config file: `~/.mobot/config.json`
+Config file: `~/.mobot/config.json` — or use `mobot web` for the visual editor.
 
-### Providers
+### LLM Providers
 
-| Provider | Get API Key |
-|----------|-------------|
-| `openrouter` | [openrouter.ai](https://openrouter.ai) (recommended) |
-| `anthropic` | [console.anthropic.com](https://console.anthropic.com) |
-| `openai` | [platform.openai.com](https://platform.openai.com) |
-| `gemini` | [aistudio.google.com](https://aistudio.google.com) |
-| `deepseek` | [platform.deepseek.com](https://platform.deepseek.com) |
-| `groq` | [console.groq.com](https://console.groq.com) |
-| `custom` | Any OpenAI-compatible endpoint |
-| `vllm` | Local self-hosted model |
+| Provider | Notes |
+|----------|-------|
+| `openrouter` | Recommended — access 300+ models, many free |
+| `anthropic` | Claude models |
+| `openai` | GPT-4o, o1 etc. |
+| `gemini` | Google Gemini |
+| `deepseek` | DeepSeek R1, V3 |
+| `groq` | Ultra-fast inference |
+| `custom` | Any OpenAI-compatible API (incl. Ollama, LM Studio) |
+| **Ollama** | Set `apiBase: http://localhost:11434/v1`, model: `ollama/<name>` |
 
 ### Android Config
 
@@ -347,7 +374,6 @@ Config file: `~/.mobot/config.json`
     "mode": "auto",
     "adbHost": "localhost",
     "adbPort": 5037,
-    "adbSerial": "",
     "termuxApi": true,
     "screenshotsDir": "/sdcard/DCIM/MOBOT"
   }
@@ -381,17 +407,43 @@ Config file: `~/.mobot/config.json`
 
 | Command | Description |
 |---------|-------------|
+| `mobot web` | **Launch web config UI** (new!) |
+| `mobot web --port 8080` | Custom port |
+| `mobot web --host 0.0.0.0` | Expose on LAN |
 | `mobot onboard` | Initialize config & workspace |
 | `mobot agent` | Interactive chat |
 | `mobot agent -m "..."` | One-shot message |
-| `mobot agent --no-markdown` | Plain text output |
-| `mobot agent --logs` | Show runtime logs |
-| `mobot gateway` | Start gateway (all channels) |
+| `mobot gateway` | Start all-channel gateway |
 | `mobot channels status` | Show channel status |
-| `mobot channels login` | Link WhatsApp (QR scan) |
+| `mobot channels login` | Link WhatsApp via QR (terminal) |
 | `mobot cron list` | List scheduled tasks |
 | `mobot cron add ...` | Add a cron job |
 | `mobot --version` | Show version |
+
+---
+
+## 🏗️ Architecture
+
+```
+Your Phone / PC
+     │
+     ▼
+┌─────────────┐     ┌──────────────┐     ┌─────────────────────────┐
+│  Chat Apps  │────▶│  Agent Loop  │────▶│      LLM Provider       │
+│  Telegram   │     │  (mobot/)    │◀────│  OpenRouter/Gemini/     │
+│  WhatsApp   │     └──────┬───────┘     │  Ollama (local) / any   │
+│  Discord    │            │             └─────────────────────────┘
+│  Web UI ←NEW│     ┌──────▼───────┐
+└─────────────┘     │    Tools     │
+                    │ • android_control ← NEW
+                    │ • exec / shell
+                    │ • web search
+                    │ • file system
+                    │ • cron / schedule
+                    └──────────────┘
+
+mobot web ──→ http://localhost:7891 ──→ browser config UI ← NEW
+```
 
 ---
 
@@ -413,8 +465,6 @@ docker compose logs -f mobot-gateway
 ---
 
 ## 🐧 Linux / Android Service
-
-Run MOBOT as a background service:
 
 **systemd (Linux):**
 ```ini
@@ -439,10 +489,9 @@ systemctl --user enable --now mobot-gateway
 
 **Termux background (Android):**
 ```bash
-# Run in background with nohup
 nohup mobot gateway > ~/mobot.log 2>&1 &
 
-# Or use Termux:Boot to auto-start
+# Or auto-start with Termux:Boot
 mkdir -p ~/.termux/boot
 echo "mobot gateway >> ~/mobot.log 2>&1" > ~/.termux/boot/start-mobot.sh
 chmod +x ~/.termux/boot/start-mobot.sh
@@ -450,48 +499,46 @@ chmod +x ~/.termux/boot/start-mobot.sh
 
 ---
 
-## 🔧 Troubleshooting on Android
+## 🔧 Troubleshooting
 
 | Problem | Fix |
 |---------|-----|
-| **`pip install --upgrade pip` is forbidden** | Termux manages pip via `pkg`. Never run `pip install --upgrade pip`. Use `pkg install python-pip` instead |
-| **`fastuuid` build error** during `pip install` | Run `pkg install rust -y` first, then retry `MATHLIB="" pip install -e .` |
-| `mobot: command not found` | Add to PATH: `echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc && source ~/.bashrc` |
+| **`pip install --upgrade pip` is forbidden** | Termux manages pip via `pkg`. Use `pkg install python-pip` instead |
+| **`fastuuid` build error** | Pinned in `pyproject.toml` — ensure you installed from source (`pip install -e .`) |
+| **`mobot: command not found`** | `echo 'export PATH="$PATH:$HOME/.local/bin"' >> ~/.bashrc && source ~/.bashrc` |
+| **WhatsApp QR: bridge not found** | Run `mobot channels login` once (auto-installs bridge), or install Node.js first: `pkg install nodejs` |
+| **Ollama: connection refused** | Make sure Ollama is running: `ollama serve` |
+| **Ollama on Android — no models** | Run Ollama on a PC on the same Wi-Fi, set URL to `http://<your-pc-ip>:11434` in web UI |
 | `pkg install` fails | Run `pkg update && pkg upgrade -y` first |
-| Screenshot is blank/fails | Install Termux:API from F-Droid AND run `pkg install termux-api` |
+| Screenshot blank | Install Termux:API from F-Droid AND `pkg install termux-api` |
 | Storage permission denied | Run `termux-setup-storage` and tap Allow |
-| `git clone` slow/fails | Check Wi-Fi; try `pkg install git` to reinstall |
-| `pip install` very slow | Add `--no-cache-dir` flag; if Rust is compiling, it can take 10–20 min |
-| App won't launch via `launch_app` | Try `get_screen_text` first to confirm the package name |
-| ADB not found | Run `pkg install android-tools` (on Termux) or install ADB on PC |
+| ADB not found | `pkg install android-tools` (Termux) or install ADB on PC |
 
 ---
 
 ## 📁 Project Structure
 
 ```
-mobot/                     ← Main package (renamed from nanobot/)
+mobot/
 ├── agent/
 │   ├── loop.py            ← Core agent loop
 │   ├── context.py         ← Prompt builder
 │   ├── memory.py          ← Persistent memory
 │   └── tools/
-│       ├── android.py     ← NEW: Android device control
+│       ├── android.py     ← Android device control
 │       ├── shell.py       ← Shell execution
 │       ├── web.py         ← Web search/fetch
 │       └── filesystem.py  ← File operations
-├── skills/
-│   ├── android-navigate/  ← NEW: App navigation skill
-│   ├── android-screenshot/← NEW: Screenshot skill
-│   ├── android-email/     ← NEW: Email skill
-│   └── ...                ← github, weather, tmux, memory...
+├── web/                   ← NEW: Web config UI
+│   ├── server.py          ← Pure-stdlib HTTP server + API
+│   └── index.html         ← Single-page config UI
 ├── channels/              ← Telegram, Discord, WhatsApp, etc.
-├── config/                ← Schema with AndroidConfig
-└── cli/                   ← CLI commands
+├── config/                ← Schema + loader
+└── cli/
+    └── commands.py        ← CLI commands (incl. mobot web)
 
 install-termux.sh          ← Android one-liner installer
-mobot-android.sh           ← Android launcher script
-INSTALL_ANDROID.md         ← Full Android install guide
+docs/                      ← UI screenshots
 ```
 
 ---
