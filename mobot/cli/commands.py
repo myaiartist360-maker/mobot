@@ -233,10 +233,24 @@ def _make_provider(config: Config):
 
     # Custom: direct OpenAI-compatible endpoint, bypasses LiteLLM
     if provider_name == "custom":
+        api_base = config.get_api_base(model) or "http://localhost:8000/v1"
+        api_key = p.api_key if p else "no-key"
+        # Ollama's OpenAI-compat API only accepts bare model names (no "ollama/" prefix)
+        _OLLAMA_PREFIXES = ("ollama/", "ollama_chat/")
+        bare_model = model
+        for _pfx in _OLLAMA_PREFIXES:
+            if model.startswith(_pfx):
+                bare_model = model[len(_pfx):]
+                # Also expose the base URL for LiteLLM / tools that check OLLAMA_API_BASE
+                _ollama_base = api_base
+                if _ollama_base.endswith("/v1"):
+                    _ollama_base = _ollama_base[:-3]
+                os.environ.setdefault("OLLAMA_API_BASE", _ollama_base.rstrip("/"))
+                break
         return CustomProvider(
-            api_key=p.api_key if p else "no-key",
-            api_base=config.get_api_base(model) or "http://localhost:8000/v1",
-            default_model=model,
+            api_key=api_key,
+            api_base=api_base,
+            default_model=bare_model,
         )
 
     from mobot.providers.registry import find_by_name
