@@ -241,13 +241,24 @@ def _make_provider(config: Config):
 
     from mobot.providers.registry import find_by_name
     spec = find_by_name(provider_name)
-    if not model.startswith("bedrock/") and not (p and p.api_key) and not (spec and spec.is_oauth):
+    # Ollama / local models never need an API key
+    _no_key_prefixes = ("bedrock/", "ollama/", "ollama_chat/", "vllm/")
+    _needs_key = (
+        not any(model.startswith(pfx) for pfx in _no_key_prefixes)
+        and not (p and p.api_key)
+        and not (spec and spec.is_oauth)
+    )
+    if _needs_key:
         console.print("[red]Error: No API key configured.[/red]")
         console.print("Set one in ~/.mobot/config.json under providers section")
         raise typer.Exit(1)
 
+    # For Ollama, pass a dummy key so LiteLLM doesn't complain
+    _api_key = (p.api_key if p and p.api_key else None) or (
+        "ollama" if any(model.startswith(pfx) for pfx in ("ollama/", "ollama_chat/")) else None
+    )
     return LiteLLMProvider(
-        api_key=p.api_key if p else None,
+        api_key=_api_key,
         api_base=config.get_api_base(model),
         default_model=model,
         extra_headers=p.extra_headers if p else None,

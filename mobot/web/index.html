@@ -1206,7 +1206,8 @@
           <div>
             <div class="tog-lbl">Enable WhatsApp</div>
             <div class="tog-desc">Requires Node.js ≥18. Use the button below to scan QR, or run
-              <code>mobot channels login</code>.</div>
+              <code>mobot channels login</code>.
+            </div>
           </div><label class="tog"><input id="whatsapp-enabled" type="checkbox"
               onchange="updateBadge('whatsapp',this.checked)"><span class="tog-sl"></span></label>
         </div>
@@ -1690,8 +1691,12 @@
       const base = gv('ollama-base') || 'http://localhost:11434';
       document.getElementById('model').value = 'ollama/' + sel.value;
       document.getElementById('base-custom').value = base + '/v1';
-      document.querySelector('[data-section="provider"]').click();
-      showToast('✔ Model set to ollama/' + sel.value + '. Click Save Config to apply.', 'ok');
+      // Ollama needs no real key — set 'ollama' as a dummy so validators pass
+      if (!gv('key-custom')) document.getElementById('key-custom').value = 'ollama';
+      // Use 'custom' provider so mobot routes via CustomProvider (skips key requirement)
+      document.getElementById('provider-override').value = 'custom';
+      nav(document.querySelector('[data-section="provider"]'));
+      showToast('✔ Model set to ollama/' + sel.value + '. Save Config to apply.', 'ok');
     }
 
     // ── Gateway ───────────────────────────────────────────────────────────────────
