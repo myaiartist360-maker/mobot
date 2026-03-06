@@ -3,25 +3,26 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🤖 MOBOT Config</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MOBOT — Configuration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <style>
     :root {
       --bg: #0d1117;
       --bg2: #161b22;
-      --bg3: #1f2937;
+      --bg3: #21262d;
       --border: #30363d;
-      --accent: #00d4aa;
-      --accent2: #0ea5e9;
       --text: #e6edf3;
       --muted: #8b949e;
+      --accent: #00d4aa;
+      --accent2: #58a6ff;
       --danger: #f85149;
       --success: #3fb950;
       --warn: #d29922;
       --radius: 10px;
-      --glass: rgba(255, 255, 255, 0.04);
+      --side: 220px
     }
 
     * {
@@ -34,77 +35,73 @@
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
+      display: flex;
       min-height: 100vh;
-      display: flex
+      font-size: 14px
     }
 
-    /* ── Sidebar ── */
+    /* sidebar */
     #sidebar {
-      width: 220px;
-      flex-shrink: 0;
+      width: var(--side);
       background: var(--bg2);
       border-right: 1px solid var(--border);
-      padding: 0;
-      display: flex;
-      flex-direction: column;
       position: fixed;
       top: 0;
       left: 0;
-      bottom: 0;
-      z-index: 10;
+      height: 100vh;
       overflow-y: auto;
+      z-index: 50;
+      transition: transform .25s
     }
 
     #logo {
-      padding: 20px 16px;
-      border-bottom: 1px solid var(--border);
+      padding: 18px 16px 14px;
       display: flex;
       align-items: center;
-      gap: 10px
+      gap: 10px;
+      border-bottom: 1px solid var(--border)
     }
 
     #logo span {
-      font-size: 22px
+      font-size: 24px
     }
 
     #logo h2 {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: .5px
+      font-size: 16px;
+      font-weight: 700
     }
 
     #logo p {
       font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px
+      color: var(--muted)
     }
 
-    .nav-section {
-      padding: 12px 8px 4px;
+    .nav-grp {
+      padding: 10px 10px 4px;
       font-size: 10px;
       font-weight: 600;
       color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase
+      text-transform: uppercase;
+      letter-spacing: .08em
     }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 9px 16px;
-      margin: 1px 8px;
+      gap: 8px;
+      padding: 8px 12px;
+      margin: 1px 6px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 13px;
+      font-weight: 500;
       color: var(--muted);
-      transition: .15s;
       text-decoration: none;
+      transition: .12s
     }
 
     .nav-item:hover {
-      background: var(--glass);
+      background: var(--bg3);
       color: var(--text)
     }
 
@@ -113,296 +110,18 @@
       color: var(--accent)
     }
 
-    .nav-item .icon {
-      font-size: 15px;
+    .nav-item .ico {
       width: 18px;
-      text-align: center
+      text-align: center;
+      font-size: 14px
     }
 
-    /* ── Main ── */
-    #main {
-      margin-left: 220px;
-      flex: 1;
-      padding: 28px;
-      max-width: 900px
-    }
-
-    #topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 28px
-    }
-
-    #topbar h1 {
-      font-size: 20px;
-      font-weight: 700
-    }
-
-    #save-btn {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: .15s;
-    }
-
-    #save-btn:hover {
-      opacity: .85
-    }
-
-    #save-btn:active {
-      transform: scale(.97)
-    }
-
-    /* ── Cards / Sections ── */
-    .section {
-      display: none;
-      animation: fadeIn .2s ease
-    }
-
-    .section.active {
-      display: block
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(6px)
-      }
-
-      to {
-        opacity: 1;
-        transform: none
-      }
-    }
-
-    .card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-bottom: 18px
-    }
-
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px
-    }
-
-    .card-title span {
-      font-size: 18px
-    }
-
-    /* ── Form elements ── */
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px
-    }
-
-    .form-grid.cols-1 {
-      grid-template-columns: 1fr
-    }
-
-    @media(max-width:600px) {
-      .form-grid {
-        grid-template-columns: 1fr
-      }
-
-      #sidebar {
-        width: 180px
-      }
-
-      #main {
-        margin-left: 180px
-      }
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 5px
-    }
-
-    .field label {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 500
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 9px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      outline: none;
-      width: 100%;
-      font-family: 'Inter', sans-serif;
-      transition: .15s;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--accent)
-    }
-
-    .field textarea {
-      resize: vertical;
-      min-height: 70px
-    }
-
-    .field select option {
-      background: var(--bg3)
-    }
-
-    .pw-wrap {
-      position: relative
-    }
-
-    .pw-wrap input {
-      padding-right: 36px
-    }
-
-    .pw-wrap .eye {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: var(--muted);
-      font-size: 15px;
-      user-select: none;
-    }
-
-    /* ── Toggle ── */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border)
-    }
-
-    .toggle-row:last-child {
-      border-bottom: none
-    }
-
-    .toggle-label {
-      font-size: 13px;
-      font-weight: 500
-    }
-
-    .toggle-desc {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 2px
-    }
-
-    .toggle {
-      position: relative;
-      width: 40px;
-      height: 22px;
-      flex-shrink: 0
-    }
-
-    .toggle input {
-      opacity: 0;
-      width: 0;
-      height: 0
-    }
-
-    .toggle-slider {
-      position: absolute;
-      inset: 0;
-      background: var(--bg3);
-      border-radius: 22px;
-      cursor: pointer;
-      transition: .2s;
-      border: 1px solid var(--border);
-    }
-
-    .toggle-slider:before {
-      content: "";
-      position: absolute;
-      width: 16px;
-      height: 16px;
-      background: #666;
-      border-radius: 50%;
-      top: 2px;
-      left: 2px;
-      transition: .2s;
-    }
-
-    .toggle input:checked+.toggle-slider {
-      background: var(--accent);
-      border-color: var(--accent)
-    }
-
-    .toggle input:checked+.toggle-slider:before {
-      transform: translateX(18px);
-      background: #000
-    }
-
-    /* ── Channel blocks ── */
-    .channel-block {
-      margin-top: 14px
-    }
-
-    .channel-fields {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border)
-    }
-
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 18px;
-      font-size: 13px;
-      display: none;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
-      z-index: 100;
-      max-width: 320px;
-    }
-
-    #toast.ok {
-      border-color: var(--success);
-      color: var(--success)
-    }
-
-    #toast.err {
-      border-color: var(--danger);
-      color: var(--danger)
-    }
-
-    /* ── Badges ── */
     .badge {
       font-size: 10px;
-      padding: 2px 7px;
-      border-radius: 20px;
+      padding: 1px 6px;
+      border-radius: 10px;
       font-weight: 600;
-      margin-left: 6px
+      margin-left: auto
     }
 
     .badge.on {
@@ -417,139 +136,176 @@
       border: 1px solid var(--border)
     }
 
-    /* ── Provider cards ── */
-    .provider-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px
+    /* main */
+    #main {
+      margin-left: var(--side);
+      flex: 1;
+      padding: 24px 28px;
+      max-width: 960px
     }
 
-    .provider-card {
-      background: var(--bg3);
+    /* topbar */
+    #topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px
+    }
+
+    #topbar h1 {
+      font-size: 19px;
+      font-weight: 700
+    }
+
+    #topbar-right {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    #hamburger {
+      display: none;
+      background: none;
       border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 18px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer
+    }
+
+    #save-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 9px 20px;
       border-radius: 8px;
-      padding: 14px;
-      cursor: pointer;
-      transition: .15s;
-    }
-
-    .provider-card:hover {
-      border-color: var(--accent2)
-    }
-
-    .provider-card.has-key {
-      border-color: var(--success)
-    }
-
-    .provider-name {
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 4px
+      cursor: pointer;
+      transition: .15s;
+      white-space: nowrap
     }
 
-    .provider-status {
-      font-size: 11px;
-      color: var(--muted)
+    #save-btn:hover {
+      opacity: .85
     }
 
-    /* ── Modal ── */
-    .modal-bg {
+    /* sections */
+    .section {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, .7);
-      z-index: 200;
-      align-items: center;
-      justify-content: center;
+      animation: fadeIn .18s ease
     }
 
-    .modal-bg.open {
-      display: flex
+    .section.active {
+      display: block
     }
 
-    .modal {
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* cards */
+    .card {
       background: var(--bg2);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      width: 90%;
-      max-width: 500px;
-      position: relative;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px
     }
 
-    .modal-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 18px;
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
-      gap: 10px
+      gap: 8px
     }
 
-    .modal-close {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      cursor: pointer;
-      font-size: 18px;
-      color: var(--muted)
+    /* form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
     }
 
-    .qr-wrap {
+    .cols-1 {
+      grid-template-columns: 1fr
+    }
+
+    .field {
       display: flex;
-      justify-content: center;
-      margin: 18px 0
+      flex-direction: column;
+      gap: 5px
     }
 
-    #qr-canvas {
-      border-radius: 8px
+    .field label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500
     }
 
-    #wa-log {
+    .field input,
+    .field select,
+    .field textarea {
       background: var(--bg3);
       border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 11px;
       border-radius: 6px;
-      padding: 10px;
-      font-size: 11px;
-      font-family: monospace;
-      height: 150px;
-      overflow-y: auto;
+      font-size: 13px;
+      outline: none;
+      width: 100%;
+      font-family: inherit;
+      transition: .15s
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--accent)
+    }
+
+    .field select option {
+      background: var(--bg3)
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 66px
+    }
+
+    .pw-wrap {
+      position: relative
+    }
+
+    .pw-wrap input {
+      padding-right: 34px
+    }
+
+    .pw-wrap .eye {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
       color: var(--muted);
-      white-space: pre-wrap;
-      word-break: break-all;
+      user-select: none
     }
 
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .status-pill.waiting {
-      background: rgba(210, 153, 34, .15);
-      color: var(--warn)
-    }
-
-    .status-pill.ok {
-      background: rgba(63, 185, 80, .15);
-      color: var(--success)
-    }
-
-    .status-pill.err {
-      background: rgba(248, 81, 73, .15);
-      color: var(--danger)
-    }
-
-    /* ── Modal ── */
     .hint {
       font-size: 11px;
       color: var(--muted);
-      margin-top: 4px
+      margin-top: 3px
     }
 
     a {
@@ -564,70 +320,617 @@
     hr.sep {
       border: none;
       border-top: 1px solid var(--border);
-      margin: 18px 0
+      margin: 14px 0
+    }
+
+    /* toggle */
+    .tog-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .tog-row:last-child {
+      border-bottom: none
+    }
+
+    .tog-lbl {
+      font-size: 13px;
+      font-weight: 500
+    }
+
+    .tog-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px
+    }
+
+    .tog {
+      position: relative;
+      width: 38px;
+      height: 21px;
+      flex-shrink: 0
+    }
+
+    .tog input {
+      opacity: 0;
+      width: 0;
+      height: 0
+    }
+
+    .tog-sl {
+      position: absolute;
+      inset: 0;
+      background: var(--bg3);
+      border-radius: 21px;
+      cursor: pointer;
+      transition: .2s;
+      border: 1px solid var(--border)
+    }
+
+    .tog-sl:before {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: #666;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: .2s
+    }
+
+    .tog input:checked+.tog-sl {
+      background: var(--accent);
+      border-color: var(--accent)
+    }
+
+    .tog input:checked+.tog-sl:before {
+      transform: translateX(17px);
+      background: #000
+    }
+
+    /* ch-fields */
+    .ch-fields {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border)
+    }
+
+    /* toast */
+    #toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 16px;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+      z-index: 300;
+      max-width: 320px
+    }
+
+    #toast.ok {
+      border-color: var(--success);
+      color: var(--success)
+    }
+
+    #toast.err {
+      border-color: var(--danger);
+      color: var(--danger)
+    }
+
+    /* status pill */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 10px
+    }
+
+    .pill.ok {
+      background: rgba(63, 185, 80, .12);
+      color: var(--success)
+    }
+
+    .pill.warn {
+      background: rgba(210, 153, 34, .12);
+      color: var(--warn)
+    }
+
+    .pill.err {
+      background: rgba(248, 81, 73, .12);
+      color: var(--danger)
+    }
+
+    /* modal */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .72);
+      z-index: 200;
+      align-items: center;
+      justify-content: center
+    }
+
+    .modal-bg.open {
+      display: flex
+    }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 26px;
+      width: 90%;
+      max-width: 480px;
+      position: relative
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .modal-x {
+      position: absolute;
+      top: 13px;
+      right: 14px;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--muted)
+    }
+
+    /* log pane */
+    .logpane {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 11px;
+      font-family: monospace;
+      overflow-y: auto;
+      color: var(--muted);
+      white-space: pre-wrap;
+      word-break: break-all
+    }
+
+    /* btn variants */
+    .btn {
+      border: none;
+      padding: 9px 18px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .15s
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000
+    }
+
+    .btn-primary:hover {
+      opacity: .85
+    }
+
+    .btn-ghost {
+      background: var(--bg3);
+      color: var(--text);
+      border: 1px solid var(--border)
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent)
+    }
+
+    .btn-danger {
+      background: rgba(248, 81, 73, .15);
+      color: var(--danger);
+      border: 1px solid rgba(248, 81, 73, .3)
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px
+    }
+
+    /* status dot */
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block
+    }
+
+    .dot.green {
+      background: var(--success)
+    }
+
+    .dot.red {
+      background: var(--danger)
+    }
+
+    .dot.grey {
+      background: var(--muted)
+    }
+
+    /* dashboard cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px
+    }
+
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px
+    }
+
+    .stat-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent)
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    /* tool-item */
+    .tool-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      background: var(--bg3)
+    }
+
+    .tool-meta {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px
+    }
+
+    .tool-name {
+      font-weight: 600;
+      font-size: 13px
+    }
+
+    .tool-cat {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(88, 166, 255, .12);
+      color: var(--accent2);
+      font-weight: 600;
+      margin-left: 6px
+    }
+
+    .tool-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 5px
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border)
+    }
+
+    .action-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: var(--bg2);
+      border-radius: 5px;
+      font-size: 11px
+    }
+
+    /* chat */
+    #chat-messages {
+      height: 320px;
+      overflow-y: auto;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .msg {
+      max-width: 88%;
+      padding: 10px 13px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word
+    }
+
+    .msg.user {
+      background: rgba(0, 212, 170, .12);
+      border: 1px solid rgba(0, 212, 170, .2);
+      align-self: flex-end
+    }
+
+    .msg.agent {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      align-self: flex-start
+    }
+
+    .msg.sys {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 11px;
+      align-self: center;
+      font-style: italic
+    }
+
+    #chat-input-row {
+      display: flex;
+      gap: 8px
+    }
+
+    #chat-input {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 13px;
+      border-radius: 7px;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      resize: none;
+      height: 42px
+    }
+
+    #chat-input:focus {
+      border-color: var(--accent)
+    }
+
+    /* ollama status */
+    #ollama-status {
+      display: none;
+      margin-top: 8px;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 6px
+    }
+
+    #ollama-status.ok {
+      background: rgba(63, 185, 80, .1);
+      color: var(--success);
+      border: 1px solid rgba(63, 185, 80, .25)
+    }
+
+    #ollama-status.err {
+      background: rgba(248, 81, 73, .08);
+      color: var(--danger);
+      border: 1px solid rgba(248, 81, 73, .25)
+    }
+
+    /* mobile overlay */
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 49;
+      background: rgba(0, 0, 0, .5)
+    }
+
+    /* QR */
+    .qr-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 14px 0
+    }
+
+    /* provider grid */
+    .prov-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+    @media(max-width:640px) {
+      #sidebar {
+        transform: translateX(-100%)
+      }
+
+      #sidebar.open {
+        transform: none
+      }
+
+      #sidebar-overlay {
+        display: none
+      }
+
+      #sidebar-overlay.open {
+        display: block
+      }
+
+      #main {
+        margin-left: 0;
+        padding: 16px
+      }
+
+      #hamburger {
+        display: block
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr
+      }
+
+      .prov-grid {
+        grid-template-columns: 1fr
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .action-grid {
+        grid-template-columns: 1fr
+      }
+
+      #chat-messages {
+        height: 240px
+      }
+    }
+
+    @media(max-width:380px) {
+      .stat-grid {
+        grid-template-columns: 1fr
+      }
     }
   </style>
 </head>
 
 <body>
 
+  <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
   <!-- SIDEBAR -->
   <nav id="sidebar">
-    <div id="logo">
-      <span>🤖</span>
+    <div id="logo"><span>🤖</span>
       <div>
         <h2>MOBOT</h2>
-        <p id="ver-label">v0.1.0</p>
+        <p id="ver-label">v—</p>
       </div>
     </div>
-    <div class="nav-section">Setup</div>
-    <a class="nav-item active" data-section="provider" onclick="nav(this)"><span class="icon">🧠</span>LLM Provider</a>
-    <a class="nav-item" data-section="agent" onclick="nav(this)"><span class="icon">⚙️</span>Agent</a>
-    <a class="nav-item" data-section="android" onclick="nav(this)"><span class="icon">📱</span>Android</a>
-    <div class="nav-section">Channels</div>
-    <a class="nav-item" data-section="telegram" onclick="nav(this)"><span class="icon">✈️</span>Telegram <span
+    <div class="nav-grp">Overview</div>
+    <a class="nav-item active" data-section="dashboard" onclick="nav(this)"><span class="ico">🏠</span>Dashboard</a>
+    <div class="nav-grp">Setup</div>
+    <a class="nav-item" data-section="provider" onclick="nav(this)"><span class="ico">🧠</span>LLM Provider</a>
+    <a class="nav-item" data-section="agent" onclick="nav(this)"><span class="ico">⚙️</span>Agent</a>
+    <a class="nav-item" data-section="android" onclick="nav(this)"><span class="ico">📱</span>Android</a>
+    <div class="nav-grp">Tools</div>
+    <a class="nav-item" data-section="tools" onclick="nav(this)"><span class="ico">🔧</span>Tools &amp; Permissions</a>
+    <div class="nav-grp">Live</div>
+    <a class="nav-item" data-section="liveagent" onclick="nav(this)"><span class="ico">🤖</span>Live Agent</a>
+    <a class="nav-item" data-section="logs" onclick="nav(this)"><span class="ico">📋</span>Logs</a>
+    <div class="nav-grp">Channels</div>
+    <a class="nav-item" data-section="telegram" onclick="nav(this)"><span class="ico">✈️</span>Telegram <span
         id="badge-telegram" class="badge off">off</span></a>
-    <a class="nav-item" data-section="discord" onclick="nav(this)"><span class="icon">🎮</span>Discord <span
+    <a class="nav-item" data-section="discord" onclick="nav(this)"><span class="ico">🎮</span>Discord <span
         id="badge-discord" class="badge off">off</span></a>
-    <a class="nav-item" data-section="whatsapp" onclick="nav(this)"><span class="icon">💬</span>WhatsApp <span
+    <a class="nav-item" data-section="whatsapp" onclick="nav(this)"><span class="ico">💬</span>WhatsApp <span
         id="badge-whatsapp" class="badge off">off</span></a>
-    <a class="nav-item" data-section="slack" onclick="nav(this)"><span class="icon">💼</span>Slack <span
-        id="badge-slack" class="badge off">off</span></a>
-    <a class="nav-item" data-section="email" onclick="nav(this)"><span class="icon">📧</span>Email <span
-        id="badge-email" class="badge off">off</span></a>
-    <a class="nav-item" data-section="dingtalk" onclick="nav(this)"><span class="icon">🔔</span>DingTalk <span
-        id="badge-dingtalk" class="badge off">off</span></a>
-    <a class="nav-item" data-section="feishu" onclick="nav(this)"><span class="icon">🐦</span>Feishu <span
-        id="badge-feishu" class="badge off">off</span></a>
-    <a class="nav-item" data-section="qq" onclick="nav(this)"><span class="icon">🐧</span>QQ <span id="badge-qq"
+    <a class="nav-item" data-section="slack" onclick="nav(this)"><span class="ico">💼</span>Slack <span id="badge-slack"
         class="badge off">off</span></a>
-    <a class="nav-item" data-section="matrix" onclick="nav(this)"><span class="icon">🔷</span>Matrix <span
+    <a class="nav-item" data-section="email" onclick="nav(this)"><span class="ico">📧</span>Email <span id="badge-email"
+        class="badge off">off</span></a>
+    <a class="nav-item" data-section="dingtalk" onclick="nav(this)"><span class="ico">🔔</span>DingTalk <span
+        id="badge-dingtalk" class="badge off">off</span></a>
+    <a class="nav-item" data-section="feishu" onclick="nav(this)"><span class="ico">🐦</span>Feishu <span
+        id="badge-feishu" class="badge off">off</span></a>
+    <a class="nav-item" data-section="qq" onclick="nav(this)"><span class="ico">🐧</span>QQ <span id="badge-qq"
+        class="badge off">off</span></a>
+    <a class="nav-item" data-section="matrix" onclick="nav(this)"><span class="ico">🔷</span>Matrix <span
         id="badge-matrix" class="badge off">off</span></a>
   </nav>
 
   <!-- MAIN -->
   <main id="main">
     <div id="topbar">
-      <div>
-        <h1>MOBOT Configuration</h1>
-        <p style="font-size:12px;color:var(--muted);margin-top:3px" id="config-path-label">Loading...</p>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button id="hamburger" onclick="toggleSidebar()">☰</button>
+        <div>
+          <h1>MOBOT Configuration</h1>
+          <p style="font-size:11px;color:var(--muted);margin-top:2px" id="config-path-label">Loading…</p>
+        </div>
       </div>
-      <button id="save-btn" onclick="saveConfig()">💾 Save Config</button>
+      <div id="topbar-right">
+        <button class="btn btn-ghost btn-sm" id="gw-btn" onclick="toggleGateway()">▶ Start Gateway</button>
+        <button id="save-btn" onclick="saveConfig()">💾 Save Config</button>
+      </div>
     </div>
 
-    <!-- ── PROVIDER ── -->
-    <div id="section-provider" class="section active">
+    <!-- DASHBOARD -->
+    <div id="section-dashboard" class="section active">
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-ver">—</div>
+          <div class="stat-lbl">MOBOT Version</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-channels">—</div>
+          <div class="stat-lbl">Active Channels</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-model">—</div>
+          <div class="stat-lbl">Current Model</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-agent">—</div>
+          <div class="stat-lbl">Agent Status</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>⚡</span>Quick Actions</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=liveagent]'))">🤖 Chat with
+            Agent</button>
+          <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=provider]'))">🧠 Set API
+            Key</button>
+          <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=whatsapp]'))">💬 Connect
+            WhatsApp</button>
+          <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=logs]'))">📋 View
+            Logs</button>
+          <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=tools]'))">🔧 Tool
+            Permissions</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>📊</span>Channel Status</div>
+        <div id="dash-channels" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">
+        </div>
+      </div>
+    </div>
+
+    <!-- LLM PROVIDER -->
+    <div id="section-provider" class="section">
       <div class="card">
         <div class="card-title"><span>🧠</span>LLM Provider &amp; Model</div>
         <div class="form-grid">
-          <div class="field">
-            <label>Default Model</label>
-            <input id="model" placeholder="e.g. openrouter/google/gemini-2.0-flash-001">
+          <div class="field"><label>Default Model</label><input id="model"
+              placeholder="e.g. openrouter/google/gemini-2.0-flash-001">
             <div class="hint">Format: <code>provider/model-name</code></div>
           </div>
-          <div class="field">
-            <label>Provider Override</label>
-            <select id="provider-override">
+          <div class="field"><label>Provider Override</label><select id="provider-override">
               <option value="auto">auto (detect from model name)</option>
               <option value="openrouter">openrouter</option>
               <option value="anthropic">anthropic</option>
@@ -635,104 +938,81 @@
               <option value="gemini">gemini</option>
               <option value="deepseek">deepseek</option>
               <option value="groq">groq</option>
-              <option value="custom">custom</option>
+              <option value="custom">custom / Ollama</option>
               <option value="vllm">vllm (local)</option>
-            </select>
-          </div>
+            </select></div>
         </div>
       </div>
       <div class="card">
         <div class="card-title"><span>🔑</span>API Keys</div>
-        <p class="hint" style="margin-bottom:16px">Set keys for any provider you want to use. Only providers with keys
-          are active.</p>
-        <div class="form-grid">
+        <p class="hint" style="margin-bottom:14px">Set keys for any cloud provider. Leave blank if using Ollama.</p>
+        <div class="prov-grid">
           <div class="field"><label>OpenRouter <a href="https://openrouter.ai/keys" target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-openrouter" type="password" placeholder="sk-or-v1-...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-openrouter" type="password" placeholder="sk-or-v1-…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
           <div class="field"><label>Anthropic <a href="https://console.anthropic.com" target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-anthropic" type="password" placeholder="sk-ant-...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-anthropic" type="password" placeholder="sk-ant-…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
           <div class="field"><label>OpenAI <a href="https://platform.openai.com" target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-openai" type="password" placeholder="sk-...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-openai" type="password" placeholder="sk-…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
           <div class="field"><label>Gemini <a href="https://aistudio.google.com" target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-gemini" type="password" placeholder="AIza...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-gemini" type="password" placeholder="AIza…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
           <div class="field"><label>DeepSeek <a href="https://platform.deepseek.com" target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-deepseek" type="password" placeholder="sk-...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-deepseek" type="password" placeholder="sk-…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
           <div class="field"><label>Groq <a href="https://console.groq.com" target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-groq" type="password" placeholder="gsk_...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-groq" type="password" placeholder="gsk_…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
-          <div class="field"><label>Custom API Base</label>
-            <input id="base-custom" placeholder="http://localhost:8000/v1">
-          </div>
+          <div class="field"><label>Custom API Base</label><input id="base-custom"
+              placeholder="http://localhost:8000/v1"></div>
           <div class="field"><label>Custom API Key</label>
-            <div class="pw-wrap"><input id="key-custom" type="password" placeholder="any value for local">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-custom" type="password" placeholder="any value for local"><span
+                class="eye" onclick="togglePw(this)">👁</span></div>
           </div>
           <div class="field"><label>Brave Search (web tool) <a href="https://brave.com/search/api/"
                 target="_blank">↗</a></label>
-            <div class="pw-wrap"><input id="key-brave" type="password" placeholder="BSA...">
-              <span class="eye" onclick="togglePw(this)">👁</span>
-            </div>
+            <div class="pw-wrap"><input id="key-brave" type="password" placeholder="BSA…"><span class="eye"
+                onclick="togglePw(this)">👁</span></div>
           </div>
         </div>
       </div>
+      <div class="card" style="border-color:rgba(0,212,170,.3)">
+        <div class="card-title"><span>🦙</span>Ollama Local Models <span
+            style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px">No API key needed</span></div>
+        <p class="hint" style="margin-bottom:14px">Connect to a local <a href="https://ollama.com"
+            target="_blank">Ollama</a> instance. Must be running: <code>ollama serve</code></p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end">
+          <div class="field" style="flex:1;min-width:200px"><label>Ollama URL</label><input id="ollama-base"
+              value="http://localhost:11434" placeholder="http://localhost:11434"></div>
+          <button class="btn btn-ghost btn-sm" id="ollama-test-btn" onclick="testOllama()">🔌 Test Connection</button>
+          <button class="btn btn-ghost btn-sm" id="ollama-fetch-btn" onclick="fetchOllamaModels()">🔄 Fetch
+            Models</button>
+        </div>
+        <div id="ollama-status"></div>
+        <div id="ollama-error"
+          style="display:none;font-size:12px;color:var(--danger);margin-bottom:10px;padding:7px 12px;background:rgba(248,81,73,.08);border-radius:6px;border:1px solid rgba(248,81,73,.25)">
+        </div>
+        <div id="ollama-model-row" style="display:none;gap:10px;align-items:flex-end;flex-wrap:wrap">
+          <div class="field" style="flex:1;min-width:180px"><label>Available Models</label><select
+              id="ollama-model-select">
+              <option value="">— select —</option>
+            </select></div>
+          <button class="btn btn-primary btn-sm" onclick="applyOllamaModel()">✔ Use this model</button>
+        </div>
+        <p id="ollama-tip" style="display:none;font-size:11px;color:var(--muted);margin-top:8px">Tip: Click "Use this
+          model" → Default Model &amp; API Base are auto-filled → Save Config.</p>
+      </div>
     </div>
 
-    <!-- OLLAMA -->
-    <div class="card" style="border-color:rgba(0,212,170,.25)">
-      <div class="card-title"><span>🦙</span>Ollama (Local Models) <span
-          style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px">No API key needed</span></div>
-      <p class="hint" style="margin-bottom:16px">Connect to a locally running <a href="https://ollama.com"
-          target="_blank">Ollama</a> instance and pick a model. Ollama must be running (<code>ollama serve</code>).</p>
-      <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
-        <div class="field" style="flex:1;min-width:220px">
-          <label>Ollama URL</label>
-          <input id="ollama-base" value="http://localhost:11434" placeholder="http://localhost:11434">
-        </div>
-        <button onclick="fetchOllamaModels()" id="ollama-fetch-btn"
-          style="background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:9px 16px;border-radius:7px;font-size:13px;cursor:pointer;white-space:nowrap;height:38px">
-          🔄 Fetch Models
-        </button>
-      </div>
-      <div id="ollama-error"
-        style="display:none;font-size:12px;color:var(--danger);margin-bottom:10px;padding:8px 12px;background:rgba(248,81,73,.08);border-radius:6px;border:1px solid rgba(248,81,73,.25)">
-      </div>
-      <div id="ollama-model-row" style="display:none;gap:10px;align-items:flex-end;flex-wrap:wrap">
-        <div class="field" style="flex:1;min-width:200px">
-          <label>Available Models</label>
-          <select id="ollama-model-select">
-            <option value="">— select a model —</option>
-          </select>
-        </div>
-        <button onclick="applyOllamaModel()"
-          style="background:var(--accent);color:#000;border:none;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;height:38px">
-          ✔ Use this model
-        </button>
-      </div>
-      <p id="ollama-tip" style="display:none;font-size:11px;color:var(--muted);margin-top:10px">
-        Tip: After clicking “Use this model” the Default Model field and API Base are auto-filled. Click <strong>Save
-          Config</strong> to apply.
-      </p>
-    </div>
-    </div>
-
-    <!-- ── AGENT ── -->
+    <!-- AGENT -->
     <div id="section-agent" class="section">
       <div class="card">
         <div class="card-title"><span>⚙️</span>Agent Settings</div>
@@ -746,358 +1026,370 @@
           <div class="field"><label>Memory Window (messages)</label><input id="mem-window" type="number" min="10"
               max="500" placeholder="100"></div>
           <div class="field"><label>Workspace Dir</label><input id="workspace" placeholder="~/.mobot/workspace"></div>
-          <div class="field"><label>Reasoning Effort</label>
-            <select id="reasoning-effort">
+          <div class="field"><label>Reasoning Effort</label><select id="reasoning-effort">
               <option value="">none (standard)</option>
               <option value="low">low</option>
               <option value="medium">medium</option>
               <option value="high">high</option>
-            </select>
-          </div>
+            </select></div>
         </div>
       </div>
       <div class="card">
         <div class="card-title"><span>🛡️</span>Security</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Restrict to Workspace</div>
-            <div class="toggle-desc">Sandbox all file/shell tools to workspace dir</div>
+            <div class="tog-lbl">Restrict to Workspace</div>
+            <div class="tog-desc">Sandbox all file/shell tools to workspace directory</div>
           </div>
-          <label class="toggle"><input id="restrict-ws" type="checkbox"><span class="toggle-slider"></span></label>
+          <label class="tog"><input id="restrict-ws" type="checkbox"><span class="tog-sl"></span></label>
         </div>
       </div>
     </div>
 
-    <!-- ── ANDROID ── -->
+    <!-- ANDROID -->
     <div id="section-android" class="section">
       <div class="card">
         <div class="card-title"><span>📱</span>Android Device Control</div>
         <div class="form-grid">
-          <div class="field"><label>Control Mode</label>
-            <select id="android-mode">
+          <div class="field"><label>Control Mode</label><select id="android-mode">
               <option value="auto">auto (detect Termux or ADB)</option>
               <option value="termux">termux (running on-device)</option>
               <option value="adb">adb (controlling from PC)</option>
-            </select>
-          </div>
-          <div class="field"><label>Screenshots Directory</label>
-            <input id="android-screenshots" placeholder="/sdcard/DCIM/MOBOT">
-          </div>
+            </select></div>
+          <div class="field"><label>Screenshots Directory</label><input id="android-screenshots"
+              placeholder="/sdcard/DCIM/MOBOT"></div>
           <div class="field"><label>ADB Host</label><input id="adb-host" placeholder="localhost"></div>
           <div class="field"><label>ADB Port</label><input id="adb-port" type="number" placeholder="5037"></div>
           <div class="field"><label>ADB Serial (optional)</label><input id="adb-serial"
               placeholder="leave empty for default"></div>
         </div>
         <hr class="sep">
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Termux:API Integration</div>
-            <div class="toggle-desc">Use termux-screenshot, termux-share etc. when available</div>
+            <div class="tog-lbl">Termux:API Integration</div>
+            <div class="tog-desc">Use termux-screenshot, termux-share etc. when available</div>
           </div>
-          <label class="toggle"><input id="termux-api" type="checkbox"><span class="toggle-slider"></span></label>
+          <label class="tog"><input id="termux-api" type="checkbox"><span class="tog-sl"></span></label>
         </div>
       </div>
     </div>
 
-    <!-- ── TELEGRAM ── -->
+    <!-- TOOLS -->
+    <div id="section-tools" class="section">
+      <div class="card">
+        <div class="card-title" style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:8px"><span>🔧</span>Tools &amp; Permissions</span>
+          <button class="btn btn-primary btn-sm" onclick="saveToolPermissions()">💾 Save Permissions</button>
+        </div>
+        <p class="hint" style="margin-bottom:14px">Enable or disable tools the agent can use. Disabled tools are
+          excluded from the agent's context. Changes take effect after saving and restarting the agent.</p>
+        <div id="tools-list">
+          <p style="color:var(--muted);font-size:13px">Loading tools…</p>
+        </div>
+        <hr class="sep">
+        <div class="card-title" style="margin-top:6px"><span>➕</span>Add MCP Server</div>
+        <p class="hint" style="margin-bottom:12px">Model Context Protocol servers expose external tools to the agent.
+        </p>
+        <div class="form-grid">
+          <div class="field"><label>Server Name</label><input id="mcp-name" placeholder="my-server"></div>
+          <div class="field"><label>Command</label><input id="mcp-cmd" placeholder="npx"></div>
+          <div class="field cols-1"><label>Args (comma-separated)</label><input id="mcp-args"
+              placeholder="-y, @modelcontextprotocol/server-filesystem, /path"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="addMcpServer()">➕ Add MCP Server</button>
+      </div>
+    </div>
+
+    <!-- LIVE AGENT -->
+    <div id="section-liveagent" class="section">
+      <div class="card">
+        <div class="card-title" style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:8px"><span>🤖</span>Live Agent Chat</span>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="clearChat()">🗑 Clear</button>
+            <button class="btn btn-danger btn-sm" onclick="stopAgent()">⏹ Stop</button>
+          </div>
+        </div>
+        <p class="hint" style="margin-bottom:14px">Chat with MOBOT directly. Each message runs
+          <code>mobot agent -m "..."</code> and streams the response. Make sure config is saved first.
+        </p>
+        <div id="chat-messages"></div>
+        <div id="chat-input-row">
+          <textarea id="chat-input" placeholder="Type a message… (Enter to send, Shift+Enter for newline)"></textarea>
+          <button class="btn btn-primary" onclick="sendAgentMessage()">→</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="section-logs" class="section">
+      <div class="card">
+        <div class="card-title" style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:8px"><span>📋</span>Live Logs</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="log-filter" onchange="fetchLogs()"
+              style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:6px;font-size:12px">
+              <option value="all">All logs</option>
+              <option value="agent">Agent</option>
+              <option value="config">Config</option>
+              <option value="tools">Tools</option>
+              <option value="server">Server</option>
+            </select>
+            <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)">
+              <input type="checkbox" id="log-autoscroll" checked> Auto-scroll
+            </label>
+            <button class="btn btn-ghost btn-sm" onclick="fetchLogs()">🔄 Refresh</button>
+            <button class="btn btn-ghost btn-sm" onclick="clearLogs()">🗑 Clear</button>
+          </div>
+        </div>
+        <p class="hint" style="margin-bottom:12px">Logs update every 2 seconds while this page is open. Start the agent
+          or gateway to see activity.</p>
+        <div id="log-pane" class="logpane" style="height:420px">Navigate to this section to load logs…</div>
+      </div>
+    </div>
+
+    <!-- TELEGRAM -->
     <div id="section-telegram" class="section">
       <div class="card">
         <div class="card-title"><span>✈️</span>Telegram</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable Telegram</div>
-            <div class="toggle-desc">Get a bot token from <a href="https://t.me/BotFather"
-                target="_blank">@BotFather</a></div>
-          </div>
-          <label class="toggle"><input id="tg-enabled" type="checkbox"
-              onchange="updateBadge('telegram',this.checked)"><span class="toggle-slider"></span></label>
+            <div class="tog-lbl">Enable Telegram</div>
+            <div class="tog-desc">Get a bot token from <a href="https://t.me/BotFather" target="_blank">@BotFather</a>
+            </div>
+          </div><label class="tog"><input id="telegram-enabled" type="checkbox"
+              onchange="updateBadge('telegram',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
             <div class="field"><label>Bot Token</label>
-              <div class="pw-wrap"><input id="tg-token" type="password" placeholder="1234567890:ABC...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+              <div class="pw-wrap"><input id="tg-token" type="password" placeholder="1234567890:ABC…"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>Allowed User IDs <span class="hint">(comma-separated, * = all)</span></label>
-              <input id="tg-allowfrom" placeholder="123456789, 987654321">
-            </div>
+            <div class="field"><label>Allowed User IDs <span class="hint">(comma-separated, * =
+                  all)</span></label><input id="tg-allowfrom" placeholder="123456789, 987654321"></div>
             <div class="field"><label>Proxy (optional)</label><input id="tg-proxy"
                 placeholder="socks5://127.0.0.1:1080"></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── DISCORD ── -->
+    <!-- DISCORD -->
     <div id="section-discord" class="section">
       <div class="card">
         <div class="card-title"><span>🎮</span>Discord</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable Discord</div>
-            <div class="toggle-desc">Create a bot at <a href="https://discord.com/developers/applications"
+            <div class="tog-lbl">Enable Discord</div>
+            <div class="tog-desc">Create a bot at <a href="https://discord.com/developers/applications"
                 target="_blank">discord.com/developers</a></div>
-          </div>
-          <label class="toggle"><input id="dc-enabled" type="checkbox"
-              onchange="updateBadge('discord',this.checked)"><span class="toggle-slider"></span></label>
+          </div><label class="tog"><input id="discord-enabled" type="checkbox"
+              onchange="updateBadge('discord',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
             <div class="field"><label>Bot Token</label>
-              <div class="pw-wrap"><input id="dc-token" type="password" placeholder="MTI...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+              <div class="pw-wrap"><input id="dc-token" type="password" placeholder="MTI…"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>Allowed User IDs <span class="hint">(comma-separated, * = all)</span></label>
-              <input id="dc-allowfrom" placeholder="123456789012345678">
+            <div class="field"><label>Allowed User IDs</label><input id="dc-allowfrom" placeholder="123456789012345678">
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── WHATSAPP ── -->
+    <!-- WHATSAPP -->
     <div id="section-whatsapp" class="section">
       <div class="card">
         <div class="card-title"><span>💬</span>WhatsApp</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable WhatsApp</div>
-            <div class="toggle-desc">Requires Node.js ≥18. Use <strong>Connect WhatsApp (Show QR)</strong> below, or run
-              <code>mobot channels login</code> in terminal.</div>
-          </div>
-          <label class="toggle"><input id="wa-enabled" type="checkbox"
-              onchange="updateBadge('whatsapp',this.checked)"><span class="toggle-slider"></span></label>
+            <div class="tog-lbl">Enable WhatsApp</div>
+            <div class="tog-desc">Requires Node.js ≥18. Use the button below to scan QR, or run
+              <code>mobot channels login</code>.</div>
+          </div><label class="tog"><input id="whatsapp-enabled" type="checkbox"
+              onchange="updateBadge('whatsapp',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
             <div class="field"><label>Bridge URL</label><input id="wa-bridge" placeholder="ws://localhost:3001"></div>
-            <div class="field"><label>Allowed Phone Numbers <span class="hint">(comma-separated, * = all)</span></label>
-              <input id="wa-allowfrom" placeholder="+1234567890, +9876543210">
-            </div>
+            <div class="field"><label>Allowed Phone Numbers <span class="hint">(comma-separated)</span></label><input
+                id="wa-allowfrom" placeholder="+1234567890"></div>
           </div>
-          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
-            <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
-              📲 Scan the WhatsApp QR code to link your phone. Click below to start the bridge and show the QR code.
-            </p>
-            <button onclick="openWaModal()"
-              style="background:var(--accent);color:#000;border:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">📱
-              Connect WhatsApp (Show QR)</button>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:10px">📲 Scan the QR code with WhatsApp to link
+              your phone.</p>
+            <button class="btn btn-primary" onclick="openWaModal()">📱 Connect WhatsApp (Show QR)</button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── SLACK ── -->
+    <!-- SLACK -->
     <div id="section-slack" class="section">
       <div class="card">
         <div class="card-title"><span>💼</span>Slack</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable Slack</div>
-            <div class="toggle-desc">Create an app at <a href="https://api.slack.com/apps"
+            <div class="tog-lbl">Enable Slack</div>
+            <div class="tog-desc">Create an app at <a href="https://api.slack.com/apps"
                 target="_blank">api.slack.com/apps</a></div>
-          </div>
-          <label class="toggle"><input id="sl-enabled" type="checkbox"
-              onchange="updateBadge('slack',this.checked)"><span class="toggle-slider"></span></label>
+          </div><label class="tog"><input id="slack-enabled" type="checkbox"
+              onchange="updateBadge('slack',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
-            <div class="field"><label>Bot Token (xoxb-...)</label>
-              <div class="pw-wrap"><input id="sl-bot" type="password" placeholder="xoxb-...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+            <div class="field"><label>Bot Token (xoxb-…)</label>
+              <div class="pw-wrap"><input id="sl-bot" type="password" placeholder="xoxb-…"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>App Token (xapp-...)</label>
-              <div class="pw-wrap"><input id="sl-app" type="password" placeholder="xapp-...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+            <div class="field"><label>App Token (xapp-…)</label>
+              <div class="pw-wrap"><input id="sl-app" type="password" placeholder="xapp-…"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
             <div class="field"><label>Allowed User IDs</label><input id="sl-allowfrom" placeholder="U01234ABCD"></div>
-            <div class="field"><label>Group Policy</label>
-              <select id="sl-policy">
-                <option value="mention">mention (respond only when @mentioned)</option>
-                <option value="open">open (respond to all channel messages)</option>
-                <option value="allowlist">allowlist (specific channels only)</option>
-              </select>
-            </div>
+            <div class="field"><label>Group Policy</label><select id="sl-policy">
+                <option value="mention">mention (only when @mentioned)</option>
+                <option value="open">open (all channel messages)</option>
+                <option value="allowlist">allowlist (specific channels)</option>
+              </select></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── EMAIL ── -->
+    <!-- EMAIL -->
     <div id="section-email" class="section">
       <div class="card">
         <div class="card-title"><span>📧</span>Email (IMAP/SMTP)</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable Email</div>
-            <div class="toggle-desc">Give MOBOT its own email account — use a <a
-                href="https://myaccount.google.com/apppasswords" target="_blank">Gmail App Password</a></div>
-          </div>
-          <label class="toggle"><input id="em-enabled" type="checkbox"
-              onchange="updateBadge('email',this.checked)"><span class="toggle-slider"></span></label>
+            <div class="tog-lbl">Enable Email</div>
+            <div class="tog-desc">Use a <a href="https://myaccount.google.com/apppasswords" target="_blank">Gmail App
+                Password</a> for easy setup</div>
+          </div><label class="tog"><input id="email-enabled" type="checkbox"
+              onchange="updateBadge('email',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-label">Consent Granted</div>
-            <div class="toggle-desc">Required — confirms you allow MOBOT to access this mailbox</div>
-          </div>
-          <label class="toggle"><input id="em-consent" type="checkbox"><span class="toggle-slider"></span></label>
-        </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
+          <p style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px">IMAP (Receive)</p>
           <div class="form-grid">
-            <div class="field"><label>From Address</label><input id="em-from" type="email"
-                placeholder="my-mobot@gmail.com"></div>
-            <div class="field"><label>Allowed Senders <span class="hint">(comma-separated, * = all)</span></label>
-              <input id="em-allowfrom" placeholder="you@gmail.com">
+            <div class="field"><label>Host</label><input id="em-imap-host" placeholder="imap.gmail.com"></div>
+            <div class="field"><label>Port</label><input id="em-imap-port" type="number" placeholder="993"></div>
+            <div class="field"><label>Username</label><input id="em-imap-user" placeholder="bot@gmail.com"></div>
+            <div class="field"><label>Password</label>
+              <div class="pw-wrap"><input id="em-imap-pass" type="password" placeholder="App password"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>IMAP Host</label><input id="imap-host" placeholder="imap.gmail.com"></div>
-            <div class="field"><label>IMAP Port</label><input id="imap-port" type="number" placeholder="993"></div>
-            <div class="field"><label>IMAP Username</label><input id="imap-user" placeholder="my-mobot@gmail.com"></div>
-            <div class="field"><label>IMAP Password</label>
-              <div class="pw-wrap"><input id="imap-pass" type="password" placeholder="app-password">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+          </div>
+          <p style="font-size:11px;font-weight:600;color:var(--muted);margin:12px 0 8px">SMTP (Send)</p>
+          <div class="form-grid">
+            <div class="field"><label>Host</label><input id="em-smtp-host" placeholder="smtp.gmail.com"></div>
+            <div class="field"><label>Port</label><input id="em-smtp-port" type="number" placeholder="587"></div>
+            <div class="field"><label>Username</label><input id="em-smtp-user" placeholder="bot@gmail.com"></div>
+            <div class="field"><label>Password</label>
+              <div class="pw-wrap"><input id="em-smtp-pass" type="password" placeholder="App password"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>SMTP Host</label><input id="smtp-host" placeholder="smtp.gmail.com"></div>
-            <div class="field"><label>SMTP Port</label><input id="smtp-port" type="number" placeholder="587"></div>
-            <div class="field"><label>SMTP Username</label><input id="smtp-user" placeholder="my-mobot@gmail.com"></div>
-            <div class="field"><label>SMTP Password</label>
-              <div class="pw-wrap"><input id="smtp-pass" type="password" placeholder="app-password">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
-            </div>
+          </div>
+          <div class="form-grid" style="margin-top:12px">
+            <div class="field"><label>From Address</label><input id="em-from" placeholder="bot@gmail.com"></div>
+            <div class="field"><label>Allowed From (comma-separated)</label><input id="em-allowfrom"
+                placeholder="your@email.com"></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── DINGTALK ── -->
+    <!-- DINGTALK -->
     <div id="section-dingtalk" class="section">
       <div class="card">
         <div class="card-title"><span>🔔</span>DingTalk</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable DingTalk</div>
-            <div class="toggle-desc">Create a bot at <a href="https://open-dev.dingtalk.com"
-                target="_blank">open-dev.dingtalk.com</a>, enable Stream Mode.</div>
-          </div>
-          <label class="toggle"><input id="dt-enabled" type="checkbox"
-              onchange="updateBadge('dingtalk',this.checked)"><span class="toggle-slider"></span></label>
+            <div class="tog-lbl">Enable DingTalk</div>
+            <div class="tog-desc">Get credentials from <a href="https://open.dingtalk.com"
+                target="_blank">open.dingtalk.com</a></div>
+          </div><label class="tog"><input id="dingtalk-enabled" type="checkbox"
+              onchange="updateBadge('dingtalk',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
-            <div class="field"><label>Client ID (AppKey)</label><input id="dt-id" placeholder="dingXXXXXX"></div>
-            <div class="field"><label>Client Secret (AppSecret)</label>
-              <div class="pw-wrap"><input id="dt-secret" type="password" placeholder="XXX...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+            <div class="field"><label>App Key</label><input id="dt-appkey" placeholder="dingxxxx"></div>
+            <div class="field"><label>App Secret</label>
+              <div class="pw-wrap"><input id="dt-secret" type="password" placeholder="xxx"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field cols-1"><label>Allowed Staff IDs</label><input id="dt-allowfrom"
-                placeholder="staff_id_1, staff_id_2"></div>
+            <div class="field"><label>Allowed User IDs</label><input id="dt-allowfrom" placeholder="user1, user2"></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── FEISHU ── -->
+    <!-- FEISHU -->
     <div id="section-feishu" class="section">
       <div class="card">
         <div class="card-title"><span>🐦</span>Feishu / Lark</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable Feishu</div>
-            <div class="toggle-desc">Create a bot at <a href="https://open.feishu.cn/app"
+            <div class="tog-lbl">Enable Feishu</div>
+            <div class="tog-desc">Get credentials from <a href="https://open.feishu.cn"
                 target="_blank">open.feishu.cn</a></div>
-          </div>
-          <label class="toggle"><input id="fs-enabled" type="checkbox"
-              onchange="updateBadge('feishu',this.checked)"><span class="toggle-slider"></span></label>
+          </div><label class="tog"><input id="feishu-enabled" type="checkbox"
+              onchange="updateBadge('feishu',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
-            <div class="field"><label>App ID</label><input id="fs-id" placeholder="cli_XXXXXXXX"></div>
+            <div class="field"><label>App ID</label><input id="fs-id" placeholder="cli_xxxx"></div>
             <div class="field"><label>App Secret</label>
-              <div class="pw-wrap"><input id="fs-secret" type="password" placeholder="XXX...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+              <div class="pw-wrap"><input id="fs-secret" type="password" placeholder="xxx"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>Allowed Open IDs</label><input id="fs-allowfrom" placeholder="ou_XXXXXXXX"></div>
-            <div class="field"><label>Encrypt Key (optional)</label>
-              <div class="pw-wrap"><input id="fs-encrypt" type="password" placeholder="">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
-            </div>
+            <div class="field"><label>Allowed User IDs</label><input id="fs-allowfrom" placeholder="user1, user2"></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── QQ ── -->
+    <!-- QQ -->
     <div id="section-qq" class="section">
       <div class="card">
         <div class="card-title"><span>🐧</span>QQ</div>
-        <div class="toggle-row">
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable QQ</div>
-            <div class="toggle-desc">Register at <a href="https://q.qq.com" target="_blank">q.qq.com</a></div>
-          </div>
-          <label class="toggle"><input id="qq-enabled" type="checkbox" onchange="updateBadge('qq',this.checked)"><span
-              class="toggle-slider"></span></label>
+            <div class="tog-lbl">Enable QQ</div>
+            <div class="tog-desc">Get credentials from <a href="https://q.qq.com" target="_blank">q.qq.com</a></div>
+          </div><label class="tog"><input id="qq-enabled" type="checkbox"
+              onchange="updateBadge('qq',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
-            <div class="field"><label>App ID</label><input id="qq-id" placeholder="1234567890"></div>
+            <div class="field"><label>App ID</label><input id="qq-id" placeholder="xxx"></div>
             <div class="field"><label>App Secret</label>
-              <div class="pw-wrap"><input id="qq-secret" type="password" placeholder="XXX...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+              <div class="pw-wrap"><input id="qq-secret" type="password" placeholder="xxx"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>Allowed Open IDs</label><input id="qq-allowfrom"
-                placeholder="* or openid1, openid2"></div>
+            <div class="field"><label>Allowed User IDs</label><input id="qq-allowfrom" placeholder="user1, user2"></div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ── MATRIX ── -->
+    <!-- MATRIX -->
     <div id="section-matrix" class="section">
       <div class="card">
-        <div class="card-title"><span>🔷</span>Matrix / Element</div>
-        <div class="toggle-row">
+        <div class="card-title"><span>🔷</span>Matrix</div>
+        <div class="tog-row">
           <div>
-            <div class="toggle-label">Enable Matrix</div>
-            <div class="toggle-desc">Works with any Matrix homeserver (matrix.org, Element, etc.)</div>
-          </div>
-          <label class="toggle"><input id="mx-enabled" type="checkbox"
-              onchange="updateBadge('matrix',this.checked)"><span class="toggle-slider"></span></label>
+            <div class="tog-lbl">Enable Matrix</div>
+            <div class="tog-desc">Requires a Matrix homeserver (e.g. <a href="https://matrix.org"
+                target="_blank">matrix.org</a>)</div>
+          </div><label class="tog"><input id="matrix-enabled" type="checkbox"
+              onchange="updateBadge('matrix',this.checked)"><span class="tog-sl"></span></label>
         </div>
-        <div class="channel-fields">
+        <div class="ch-fields">
           <div class="form-grid">
             <div class="field"><label>Homeserver</label><input id="mx-hs" placeholder="https://matrix.org"></div>
-            <div class="field"><label>User ID</label><input id="mx-user" placeholder="@mobot:matrix.org"></div>
             <div class="field"><label>Access Token</label>
-              <div class="pw-wrap"><input id="mx-token" type="password" placeholder="syt_...">
-                <span class="eye" onclick="togglePw(this)">👁</span>
-              </div>
+              <div class="pw-wrap"><input id="mx-token" type="password" placeholder="syt_xxx"><span class="eye"
+                  onclick="togglePw(this)">👁</span></div>
             </div>
-            <div class="field"><label>Device ID</label><input id="mx-device" placeholder="MOBOT01"></div>
-            <div class="field"><label>Allowed Users</label><input id="mx-allowfrom" placeholder="@you:matrix.org"></div>
-            <div class="field"><label>Group Policy</label>
-              <select id="mx-policy">
-                <option value="open">open</option>
-                <option value="mention">mention</option>
-                <option value="allowlist">allowlist</option>
-              </select>
+            <div class="field"><label>Room ID</label><input id="mx-room" placeholder="!roomid:matrix.org"></div>
+            <div class="field"><label>Allowed Users</label><input id="mx-allowfrom" placeholder="@user:matrix.org">
             </div>
-          </div>
-          <div class="toggle-row" style="margin-top:12px">
-            <div>
-              <div class="toggle-label">E2EE Encryption</div>
-            </div>
-            <label class="toggle"><input id="mx-e2ee" type="checkbox"><span class="toggle-slider"></span></label>
           </div>
         </div>
       </div>
@@ -1108,299 +1400,71 @@
   <!-- TOAST -->
   <div id="toast"></div>
 
-  <!-- WHATSAPP QR MODAL -->
-  <div id="wa-modal" class="modal-bg" onclick="closeWaModalOutside(event)">
+  <!-- WA MODAL -->
+  <div class="modal-bg" id="wa-modal">
     <div class="modal">
-      <span class="modal-close" onclick="closeWaModal()">✕</span>
-      <div class="modal-title"><span>💬</span>Connect WhatsApp</div>
-      <div id="wa-status-pill" class="status-pill waiting">⏳ Starting bridge...</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">
-        Open WhatsApp on your phone → <strong>Settings → Linked Devices → Link a Device</strong> → scan the QR below.
-      </p>
-      <div class="qr-wrap">
-        <canvas id="qr-canvas" width="220" height="220" style="background:#fff;padding:8px;border-radius:8px"></canvas>
-      </div>
-      <div id="qr-placeholder" style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:8px">Waiting for
-        QR code...</div>
-      <details style="margin-top:8px">
-        <summary style="font-size:12px;color:var(--muted);cursor:pointer;margin-bottom:6px">▶ Show bridge logs</summary>
-        <div id="wa-log"></div>
+      <span class="modal-x" onclick="closeWaModal()">✕</span>
+      <div class="modal-title">💬 Connect WhatsApp</div>
+      <div id="wa-status-pill" class="pill warn">⏳ Connecting…</div>
+      <div class="qr-wrap"><canvas id="qr-canvas" width="220" height="220"></canvas></div>
+      <details style="margin-bottom:10px">
+        <summary style="cursor:pointer;font-size:12px;color:var(--muted)">▶ Bridge logs</summary>
+        <div id="wa-log" class="logpane" style="height:130px;margin-top:8px"></div>
       </details>
-      <div style="display:flex;gap:10px;margin-top:16px">
-        <button id="wa-stop-btn" onclick="stopWaLogin()"
-          style="flex:1;background:var(--bg3);color:var(--text);border:1px solid var(--border);padding:9px 16px;border-radius:7px;font-size:13px;cursor:pointer">⏹
-          Stop</button>
-        <button onclick="closeWaModal()"
-          style="flex:1;background:var(--accent);color:#000;border:none;padding:9px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer">Done</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-danger btn-sm" onclick="stopWaLogin()">⏹ Stop</button>
+        <button class="btn btn-primary btn-sm" onclick="closeWaModal()">Done</button>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
   <script>
-    // ── Config state ──────────────────────────────────────────────────────────
-    let CFG = {};
+    // ── State ─────────────────────────────────────────────────────────────────────
+    let _cfg = {};
+    let _toolsData = [];
+    let _waEs = null;
+    let _agentEs = null;
+    let _logsInterval = null;
 
-    async function loadConfig() {
-      try {
-        const [cfgRes, statusRes] = await Promise.all([
-          fetch('/api/config'), fetch('/api/status')
-        ]);
-        CFG = await cfgRes.json();
-        const status = await statusRes.json();
-        document.getElementById('ver-label').textContent = 'v' + status.version;
-        document.getElementById('config-path-label').textContent = '📁 ' + status.config_path;
-        populateUI();
-      } catch (e) {
-        toast('Failed to load config: ' + e, 'err');
-      }
+    // ── Sidebar / nav ─────────────────────────────────────────────────────────────
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebar-overlay').classList.toggle('open');
     }
-
-    function get(path, def = '') {
-      return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), CFG) ?? def;
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('open');
     }
-    function arr2str(v) { return Array.isArray(v) ? v.join(', ') : (v || ''); }
-    function str2arr(v) { return v.split(',').map(s => s.trim()).filter(Boolean); }
-    function val(id) { return document.getElementById(id)?.value ?? ''; }
-    function setVal(id, v) { const el = document.getElementById(id); if (el) el.value = v ?? ''; }
-    function setChk(id, v) { const el = document.getElementById(id); if (el) el.checked = !!v; }
-    function chk(id) { return document.getElementById(id)?.checked ?? false; }
-
-    function populateUI() {
-      // Provider / model
-      setVal('model', get('agents.defaults.model'));
-      setVal('provider-override', get('agents.defaults.provider', 'auto'));
-      setVal('key-openrouter', get('providers.openrouter.apiKey'));
-      setVal('key-anthropic', get('providers.anthropic.apiKey'));
-      setVal('key-openai', get('providers.openai.apiKey'));
-      setVal('key-gemini', get('providers.gemini.apiKey'));
-      setVal('key-deepseek', get('providers.deepseek.apiKey'));
-      setVal('key-groq', get('providers.groq.apiKey'));
-      setVal('key-custom', get('providers.custom.apiKey'));
-      setVal('base-custom', get('providers.custom.apiBase'));
-      setVal('key-brave', get('tools.web.search.apiKey'));
-      // Agent
-      setVal('max-tokens', get('agents.defaults.maxTokens', 8192));
-      setVal('temperature', get('agents.defaults.temperature', 0.1));
-      setVal('max-iter', get('agents.defaults.maxToolIterations', 40));
-      setVal('mem-window', get('agents.defaults.memoryWindow', 100));
-      setVal('workspace', get('agents.defaults.workspace', '~/.mobot/workspace'));
-      setVal('reasoning-effort', get('agents.defaults.reasoningEffort') || '');
-      setChk('restrict-ws', get('tools.restrictToWorkspace', false));
-      // Android
-      setVal('android-mode', get('android.mode', 'auto'));
-      setVal('android-screenshots', get('android.screenshotsDir', '/sdcard/DCIM/MOBOT'));
-      setVal('adb-host', get('android.adbHost', 'localhost'));
-      setVal('adb-port', get('android.adbPort', 5037));
-      setVal('adb-serial', get('android.adbSerial', ''));
-      setChk('termux-api', get('android.termuxApi', true));
-      // Telegram
-      const tgOn = get('channels.telegram.enabled', false);
-      setChk('tg-enabled', tgOn); updateBadge('telegram', tgOn);
-      setVal('tg-token', get('channels.telegram.token'));
-      setVal('tg-allowfrom', arr2str(get('channels.telegram.allowFrom', [])));
-      setVal('tg-proxy', get('channels.telegram.proxy') || '');
-      // Discord
-      const dcOn = get('channels.discord.enabled', false);
-      setChk('dc-enabled', dcOn); updateBadge('discord', dcOn);
-      setVal('dc-token', get('channels.discord.token'));
-      setVal('dc-allowfrom', arr2str(get('channels.discord.allowFrom', [])));
-      // WhatsApp
-      const waOn = get('channels.whatsapp.enabled', false);
-      setChk('wa-enabled', waOn); updateBadge('whatsapp', waOn);
-      setVal('wa-bridge', get('channels.whatsapp.bridgeUrl', 'ws://localhost:3001'));
-      setVal('wa-allowfrom', arr2str(get('channels.whatsapp.allowFrom', [])));
-      // Slack
-      const slOn = get('channels.slack.enabled', false);
-      setChk('sl-enabled', slOn); updateBadge('slack', slOn);
-      setVal('sl-bot', get('channels.slack.botToken'));
-      setVal('sl-app', get('channels.slack.appToken'));
-      setVal('sl-allowfrom', arr2str(get('channels.slack.allowFrom', [])));
-      setVal('sl-policy', get('channels.slack.groupPolicy', 'mention'));
-      // Email
-      const emOn = get('channels.email.enabled', false);
-      setChk('em-enabled', emOn); updateBadge('email', emOn);
-      setChk('em-consent', get('channels.email.consentGranted', false));
-      setVal('em-from', get('channels.email.fromAddress'));
-      setVal('em-allowfrom', arr2str(get('channels.email.allowFrom', [])));
-      setVal('imap-host', get('channels.email.imapHost', 'imap.gmail.com'));
-      setVal('imap-port', get('channels.email.imapPort', 993));
-      setVal('imap-user', get('channels.email.imapUsername'));
-      setVal('imap-pass', get('channels.email.imapPassword'));
-      setVal('smtp-host', get('channels.email.smtpHost', 'smtp.gmail.com'));
-      setVal('smtp-port', get('channels.email.smtpPort', 587));
-      setVal('smtp-user', get('channels.email.smtpUsername'));
-      setVal('smtp-pass', get('channels.email.smtpPassword'));
-      // DingTalk
-      const dtOn = get('channels.dingtalk.enabled', false);
-      setChk('dt-enabled', dtOn); updateBadge('dingtalk', dtOn);
-      setVal('dt-id', get('channels.dingtalk.clientId'));
-      setVal('dt-secret', get('channels.dingtalk.clientSecret'));
-      setVal('dt-allowfrom', arr2str(get('channels.dingtalk.allowFrom', [])));
-      // Feishu
-      const fsOn = get('channels.feishu.enabled', false);
-      setChk('fs-enabled', fsOn); updateBadge('feishu', fsOn);
-      setVal('fs-id', get('channels.feishu.appId'));
-      setVal('fs-secret', get('channels.feishu.appSecret'));
-      setVal('fs-allowfrom', arr2str(get('channels.feishu.allowFrom', [])));
-      setVal('fs-encrypt', get('channels.feishu.encryptKey') || '');
-      // QQ
-      const qqOn = get('channels.qq.enabled', false);
-      setChk('qq-enabled', qqOn); updateBadge('qq', qqOn);
-      setVal('qq-id', get('channels.qq.appId'));
-      setVal('qq-secret', get('channels.qq.secret'));
-      setVal('qq-allowfrom', arr2str(get('channels.qq.allowFrom', [])));
-      // Matrix
-      const mxOn = get('channels.matrix.enabled', false);
-      setChk('mx-enabled', mxOn); updateBadge('matrix', mxOn);
-      setVal('mx-hs', get('channels.matrix.homeserver', 'https://matrix.org'));
-      setVal('mx-user', get('channels.matrix.userId'));
-      setVal('mx-token', get('channels.matrix.accessToken'));
-      setVal('mx-device', get('channels.matrix.deviceId'));
-      setVal('mx-allowfrom', arr2str(get('channels.matrix.allowFrom', [])));
-      setVal('mx-policy', get('channels.matrix.groupPolicy', 'open'));
-      setChk('mx-e2ee', get('channels.matrix.e2eeEnabled', true));
-    }
-
-    function buildConfig() {
-      return {
-        agents: {
-          defaults: {
-            model: val('model') || 'openrouter/google/gemini-2.0-flash-001',
-            provider: val('provider-override') || 'auto',
-            maxTokens: parseInt(val('max-tokens')) || 8192,
-            temperature: parseFloat(val('temperature')) || 0.1,
-            maxToolIterations: parseInt(val('max-iter')) || 40,
-            memoryWindow: parseInt(val('mem-window')) || 100,
-            workspace: val('workspace') || '~/.mobot/workspace',
-            reasoningEffort: val('reasoning-effort') || null,
-          }
-        },
-        providers: {
-          openrouter: { apiKey: val('key-openrouter') },
-          anthropic: { apiKey: val('key-anthropic') },
-          openai: { apiKey: val('key-openai') },
-          gemini: { apiKey: val('key-gemini') },
-          deepseek: { apiKey: val('key-deepseek') },
-          groq: { apiKey: val('key-groq') },
-          custom: { apiKey: val('key-custom'), apiBase: val('base-custom') || null },
-        },
-        tools: {
-          restrictToWorkspace: chk('restrict-ws'),
-          web: { search: { apiKey: val('key-brave') } },
-          exec: get('tools.exec') || {},
-          mcpServers: get('tools.mcpServers') || {},
-        },
-        android: {
-          mode: val('android-mode') || 'auto',
-          screenshotsDir: val('android-screenshots') || '/sdcard/DCIM/MOBOT',
-          adbHost: val('adb-host') || 'localhost',
-          adbPort: parseInt(val('adb-port')) || 5037,
-          adbSerial: val('adb-serial') || '',
-          termuxApi: chk('termux-api'),
-        },
-        channels: {
-          sendProgress: get('channels.sendProgress', true),
-          sendToolHints: get('channels.sendToolHints', false),
-          telegram: {
-            enabled: chk('tg-enabled'),
-            token: val('tg-token'),
-            allowFrom: str2arr(val('tg-allowfrom')),
-            proxy: val('tg-proxy') || null,
-          },
-          discord: {
-            enabled: chk('dc-enabled'),
-            token: val('dc-token'),
-            allowFrom: str2arr(val('dc-allowfrom')),
-          },
-          whatsapp: {
-            enabled: chk('wa-enabled'),
-            bridgeUrl: val('wa-bridge') || 'ws://localhost:3001',
-            allowFrom: str2arr(val('wa-allowfrom')),
-          },
-          slack: {
-            enabled: chk('sl-enabled'),
-            botToken: val('sl-bot'),
-            appToken: val('sl-app'),
-            allowFrom: str2arr(val('sl-allowfrom')),
-            groupPolicy: val('sl-policy') || 'mention',
-          },
-          email: {
-            enabled: chk('em-enabled'),
-            consentGranted: chk('em-consent'),
-            fromAddress: val('em-from'),
-            allowFrom: str2arr(val('em-allowfrom')),
-            imapHost: val('imap-host') || 'imap.gmail.com',
-            imapPort: parseInt(val('imap-port')) || 993,
-            imapUsername: val('imap-user'),
-            imapPassword: val('imap-pass'),
-            smtpHost: val('smtp-host') || 'smtp.gmail.com',
-            smtpPort: parseInt(val('smtp-port')) || 587,
-            smtpUsername: val('smtp-user'),
-            smtpPassword: val('smtp-pass'),
-          },
-          dingtalk: {
-            enabled: chk('dt-enabled'),
-            clientId: val('dt-id'),
-            clientSecret: val('dt-secret'),
-            allowFrom: str2arr(val('dt-allowfrom')),
-          },
-          feishu: {
-            enabled: chk('fs-enabled'),
-            appId: val('fs-id'),
-            appSecret: val('fs-secret'),
-            allowFrom: str2arr(val('fs-allowfrom')),
-            encryptKey: val('fs-encrypt') || '',
-          },
-          qq: {
-            enabled: chk('qq-enabled'),
-            appId: val('qq-id'),
-            secret: val('qq-secret'),
-            allowFrom: str2arr(val('qq-allowfrom')),
-          },
-          matrix: {
-            enabled: chk('mx-enabled'),
-            homeserver: val('mx-hs') || 'https://matrix.org',
-            userId: val('mx-user'),
-            accessToken: val('mx-token'),
-            deviceId: val('mx-device'),
-            allowFrom: str2arr(val('mx-allowfrom')),
-            groupPolicy: val('mx-policy') || 'open',
-            e2eeEnabled: chk('mx-e2ee'),
-          },
-          mochat: get('channels.mochat') || { enabled: false },
-        },
-        gateway: get('gateway') || {},
-      };
-    }
-
-    async function saveConfig() {
-      const btn = document.getElementById('save-btn');
-      btn.textContent = '⏳ Saving...'; btn.disabled = true;
-      try {
-        const res = await fetch('/api/config', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(buildConfig())
-        });
-        const data = await res.json();
-        if (data.ok) { toast('✓ Config saved!', 'ok'); CFG = buildConfig(); }
-        else throw new Error(data.message);
-      } catch (e) {
-        toast('Error: ' + e.message, 'err');
-      } finally {
-        btn.textContent = '💾 Save Config'; btn.disabled = false;
-      }
-    }
-
-    // ── UI Helpers ────────────────────────────────────────────────────────────
     function nav(el) {
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
       el.classList.add('active');
       const sec = el.dataset.section;
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       document.getElementById('section-' + sec).classList.add('active');
+      closeSidebar();
+      if (sec === 'logs') startLogPolling();
+      else stopLogPolling();
+      if (sec === 'tools') loadTools();
+      if (sec === 'dashboard') refreshDashboard();
     }
 
+    // ── Toast ─────────────────────────────────────────────────────────────────────
+    function showToast(msg, type = 'ok') {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = type;
+      t.style.display = 'flex';
+      clearTimeout(t._tid);
+      t._tid = setTimeout(() => t.style.display = 'none', 4000);
+    }
+
+    // ── Password toggle ───────────────────────────────────────────────────────────
+    function togglePw(el) {
+      const inp = el.previousElementSibling;
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      el.textContent = inp.type === 'password' ? '👁' : '🙈';
+    }
+
+    // ── Badge ─────────────────────────────────────────────────────────────────────
     function updateBadge(ch, on) {
       const b = document.getElementById('badge-' + ch);
       if (!b) return;
@@ -1408,151 +1472,414 @@
       b.className = 'badge ' + (on ? 'on' : 'off');
     }
 
-    function togglePw(eye) {
-      const inp = eye.parentElement.querySelector('input');
-      inp.type = inp.type === 'password' ? 'text' : 'password';
-      eye.textContent = inp.type === 'password' ? '👁' : '🙈';
+    // ── Config load/save ──────────────────────────────────────────────────────────
+    async function loadConfig() {
+      try {
+        const r = await fetch('/api/config');
+        _cfg = await r.json();
+        applyConfig(_cfg);
+        const s = await (await fetch('/api/status')).json();
+        document.getElementById('ver-label').textContent = 'v' + s.version;
+        document.getElementById('config-path-label').textContent = s.config_path;
+        document.getElementById('stat-ver').textContent = 'v' + s.version;
+        refreshDashboard();
+      } catch (e) { showToast('Failed to load config: ' + e, 'err'); }
     }
 
-    function toast(msg, type = 'ok') {
-      const t = document.getElementById('toast');
-      t.textContent = msg; t.className = type; t.style.display = 'flex';
-      setTimeout(() => { t.style.display = 'none'; }, 3500);
-    }
+    function applyConfig(c) {
+      const p = c.providers || {}; const a = (c.agents || {}).defaults || {};
+      const ch = c.channels || {}; const an = c.android || {};
+      const t = c.tools || {};
 
-    // ── WhatsApp QR modal ───────────────────────────────────────────────────────
-    let _waEvtSrc = null;
+      sv('model', a.model || '');
+      sv('provider-override', a.provider || 'auto');
+      sv('max-tokens', a.maxTokens || '');
+      sv('temperature', a.temperature || '');
+      sv('max-iter', a.maxIterations || '');
+      sv('mem-window', a.memoryWindow || '');
+      sv('workspace', a.workspaceDir || '');
+      sv('reasoning-effort', a.reasoningEffort || '');
 
-    function openWaModal() {
-      document.getElementById('wa-modal').classList.add('open');
-      document.getElementById('wa-log').textContent = '';
-      document.getElementById('qr-placeholder').style.display = 'block';
-      document.getElementById('wa-status-pill').className = 'status-pill waiting';
-      document.getElementById('wa-status-pill').textContent = '⏳ Starting bridge...';
-      // Clear previous QR
-      const canvas = document.getElementById('qr-canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // Start SSE
-      if (_waEvtSrc) _waEvtSrc.close();
-      _waEvtSrc = new EventSource('/api/channels/whatsapp/stream');
-      _waEvtSrc.addEventListener('status', e => {
-        appendLog('[status] ' + JSON.parse(e.data));
+      sv('key-openrouter', (p.openrouter || {}).apiKey || '');
+      sv('key-anthropic', (p.anthropic || {}).apiKey || '');
+      sv('key-openai', (p.openai || {}).apiKey || '');
+      sv('key-gemini', (p.gemini || {}).apiKey || '');
+      sv('key-deepseek', (p.deepseek || {}).apiKey || '');
+      sv('key-groq', (p.groq || {}).apiKey || '');
+      sv('base-custom', (p.custom || {}).apiBase || '');
+      sv('key-custom', (p.custom || {}).apiKey || '');
+      sv('key-brave', (t.web || {}).search?.apiKey || (t.braveApiKey) || '');
+      sv('ollama-base', (p.custom || {}).apiBase?.replace('/v1', '') || 'http://localhost:11434');
+
+      sv('android-mode', an.mode || 'auto');
+      sv('android-screenshots', an.screenshotsDir || '');
+      sv('adb-host', an.adbHost || '');
+      sv('adb-port', an.adbPort || '');
+      sv('adb-serial', an.adbSerial || '');
+      sc('termux-api', an.termuxApi !== false);
+      sc('restrict-ws', a.restrictToWorkspace || false);
+
+      ['telegram', 'discord', 'whatsapp', 'slack', 'email', 'dingtalk', 'feishu', 'qq', 'matrix'].forEach(name => {
+        const d = ch[name] || {};
+        sc(name + '-enabled', !!d.enabled);
+        updateBadge(name, !!d.enabled);
       });
-      _waEvtSrc.addEventListener('qr', e => {
-        const qrData = JSON.parse(e.data);
-        renderQR(qrData);
-        document.getElementById('qr-placeholder').style.display = 'none';
-        document.getElementById('wa-status-pill').className = 'status-pill waiting';
-        document.getElementById('wa-status-pill').textContent = '📲 Scan QR code with your phone';
-      });
-      _waEvtSrc.addEventListener('log', e => {
-        appendLog(JSON.parse(e.data));
-      });
-      _waEvtSrc.addEventListener('connected', e => {
-        document.getElementById('wa-status-pill').className = 'status-pill ok';
-        document.getElementById('wa-status-pill').textContent = '✓ ' + JSON.parse(e.data);
-        appendLog('✓ ' + JSON.parse(e.data));
-        _waEvtSrc.close();
-      });
-      _waEvtSrc.addEventListener('error', e => {
-        const msg = e.data ? JSON.parse(e.data) : 'Connection error';
-        document.getElementById('wa-status-pill').className = 'status-pill err';
-        document.getElementById('wa-status-pill').textContent = '✗ ' + msg;
-        appendLog('ERROR: ' + msg);
-      });
-      _waEvtSrc.addEventListener('done', () => {
-        if (_waEvtSrc) { _waEvtSrc.close(); _waEvtSrc = null; }
-      });
-      _waEvtSrc.onerror = () => {
-        appendLog('[stream closed]');
-        if (_waEvtSrc) { _waEvtSrc.close(); _waEvtSrc = null; }
-      };
+
+      // telegram
+      sv('tg-token', (ch.telegram || {}).token || '');
+      sv('tg-allowfrom', arr(ch.telegram?.allowFrom));
+      sv('tg-proxy', (ch.telegram || {}).proxy || '');
+      // discord
+      sv('dc-token', (ch.discord || {}).token || '');
+      sv('dc-allowfrom', arr(ch.discord?.allowFrom));
+      // whatsapp
+      sv('wa-bridge', (ch.whatsapp || {}).bridgeUrl || 'ws://localhost:3001');
+      sv('wa-allowfrom', arr(ch.whatsapp?.allowFrom));
+      // slack
+      sv('sl-bot', (ch.slack || {}).botToken || '');
+      sv('sl-app', (ch.slack || {}).appToken || '');
+      sv('sl-allowfrom', arr(ch.slack?.allowFrom));
+      sv('sl-policy', (ch.slack || {}).groupPolicy || 'mention');
+      // email
+      sc('em-enabled', !!(ch.email || {}).enabled);
+      sv('em-imap-host', (ch.email || {}).imapHost || '');
+      sv('em-imap-port', (ch.email || {}).imapPort || '');
+      sv('em-imap-user', (ch.email || {}).imapUsername || '');
+      sv('em-imap-pass', (ch.email || {}).imapPassword || '');
+      sv('em-smtp-host', (ch.email || {}).smtpHost || '');
+      sv('em-smtp-port', (ch.email || {}).smtpPort || '');
+      sv('em-smtp-user', (ch.email || {}).smtpUsername || '');
+      sv('em-smtp-pass', (ch.email || {}).smtpPassword || '');
+      sv('em-from', (ch.email || {}).fromAddress || '');
+      sv('em-allowfrom', arr(ch.email?.allowFrom));
+      // dingtalk
+      sv('dt-appkey', (ch.dingtalk || {}).appKey || '');
+      sv('dt-secret', (ch.dingtalk || {}).appSecret || '');
+      sv('dt-allowfrom', arr(ch.dingtalk?.allowFrom));
+      // feishu
+      sv('fs-id', (ch.feishu || {}).appId || '');
+      sv('fs-secret', (ch.feishu || {}).appSecret || '');
+      sv('fs-allowfrom', arr(ch.feishu?.allowFrom));
+      // qq
+      sv('qq-id', (ch.qq || {}).appId || '');
+      sv('qq-secret', (ch.qq || {}).appSecret || '');
+      sv('qq-allowfrom', arr(ch.qq?.allowFrom));
+      // matrix
+      sv('mx-hs', (ch.matrix || {}).homeserver || '');
+      sv('mx-token', (ch.matrix || {}).accessToken || '');
+      sv('mx-room', (ch.matrix || {}).roomId || '');
+      sv('mx-allowfrom', arr(ch.matrix?.allowFrom));
     }
 
-    function closeWaModal() {
-      document.getElementById('wa-modal').classList.remove('open');
-      stopWaLogin();
+    function sv(id, val) { const e = document.getElementById(id); if (e) e.value = val ?? ''; }
+    function sc(id, v) { const e = document.getElementById(id); if (e) e.checked = !!v; }
+    function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+    function gc(id) { const e = document.getElementById(id); return e ? e.checked : false; }
+    function arr(v) { return Array.isArray(v) ? v.join(', ') : v || ''; }
+    function toArr(s) { return s.split(',').map(x => x.trim()).filter(Boolean); }
+
+    function buildConfig() {
+      const ch = {};
+      function chk(name, obj) { if (gc(name + '-enabled')) ch[name] = { ...obj, enabled: true }; }
+      chk('telegram', { token: gv('tg-token'), allowFrom: toArr(gv('tg-allowfrom')), proxy: gv('tg-proxy') || undefined });
+      chk('discord', { token: gv('dc-token'), allowFrom: toArr(gv('dc-allowfrom')) });
+      if (gc('wa-enabled')) ch.whatsapp = { enabled: true, bridgeUrl: gv('wa-bridge'), allowFrom: toArr(gv('wa-allowfrom')) };
+      chk('slack', { botToken: gv('sl-bot'), appToken: gv('sl-app'), allowFrom: toArr(gv('sl-allowfrom')), groupPolicy: gv('sl-policy') });
+      if (gc('em-enabled')) ch.email = { enabled: true, imapHost: gv('em-imap-host'), imapPort: +gv('em-imap-port') || 993, imapUsername: gv('em-imap-user'), imapPassword: gv('em-imap-pass'), smtpHost: gv('em-smtp-host'), smtpPort: +gv('em-smtp-port') || 587, smtpUsername: gv('em-smtp-user'), smtpPassword: gv('em-smtp-pass'), fromAddress: gv('em-from'), allowFrom: toArr(gv('em-allowfrom')) };
+      chk('dingtalk', { appKey: gv('dt-appkey'), appSecret: gv('dt-secret'), allowFrom: toArr(gv('dt-allowfrom')) });
+      chk('feishu', { appId: gv('fs-id'), appSecret: gv('fs-secret'), allowFrom: toArr(gv('fs-allowfrom')) });
+      chk('qq', { appId: gv('qq-id'), appSecret: gv('qq-secret'), allowFrom: toArr(gv('qq-allowfrom')) });
+      chk('matrix', { homeserver: gv('mx-hs'), accessToken: gv('mx-token'), roomId: gv('mx-room'), allowFrom: toArr(gv('mx-allowfrom')) });
+
+      const prov = {};
+      if (gv('key-openrouter')) prov.openrouter = { apiKey: gv('key-openrouter') };
+      if (gv('key-anthropic')) prov.anthropic = { apiKey: gv('key-anthropic') };
+      if (gv('key-openai')) prov.openai = { apiKey: gv('key-openai') };
+      if (gv('key-gemini')) prov.gemini = { apiKey: gv('key-gemini') };
+      if (gv('key-deepseek')) prov.deepseek = { apiKey: gv('key-deepseek') };
+      if (gv('key-groq')) prov.groq = { apiKey: gv('key-groq') };
+      if (gv('base-custom') || gv('key-custom')) prov.custom = { apiBase: gv('base-custom'), apiKey: gv('key-custom') };
+
+      const defs = { model: gv('model'), provider: gv('provider-override') || undefined };
+      if (gv('max-tokens')) defs.maxTokens = +gv('max-tokens');
+      if (gv('temperature')) defs.temperature = +gv('temperature');
+      if (gv('max-iter')) defs.maxIterations = +gv('max-iter');
+      if (gv('mem-window')) defs.memoryWindow = +gv('mem-window');
+      if (gv('workspace')) defs.workspaceDir = gv('workspace');
+      if (gv('reasoning-effort')) defs.reasoningEffort = gv('reasoning-effort');
+      defs.restrictToWorkspace = gc('restrict-ws');
+
+      const tools = {};
+      if (gv('key-brave')) tools.braveApiKey = gv('key-brave');
+
+      return { providers: prov, agents: { defaults: defs }, channels: ch, tools, android: { mode: gv('android-mode'), screenshotsDir: gv('android-screenshots') || undefined, adbHost: gv('adb-host') || undefined, adbPort: +gv('adb-port') || undefined, adbSerial: gv('adb-serial') || undefined, termuxApi: gc('termux-api') } };
     }
 
-    function closeWaModalOutside(e) {
-      if (e.target === document.getElementById('wa-modal')) closeWaModal();
+    async function saveConfig() {
+      try {
+        const r = await fetch('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(buildConfig()) });
+        const d = await r.json();
+        if (d.ok) showToast('✓ Config saved', 'ok');
+        else showToast('Error: ' + d.message, 'err');
+      } catch (e) { showToast('Save failed: ' + e, 'err'); }
     }
 
-    async function stopWaLogin() {
-      if (_waEvtSrc) { _waEvtSrc.close(); _waEvtSrc = null; }
-      try { await fetch('/api/channels/whatsapp/stop', { method: 'POST' }); } catch (_) { }
+    // ── Dashboard ─────────────────────────────────────────────────────────────────
+    async function refreshDashboard() {
+      const c = _cfg; const ch = c.channels || {};
+      const active = Object.values(ch).filter(x => x.enabled).length;
+      document.getElementById('stat-channels').textContent = active;
+      const model = (c.agents || {}).defaults?.model || '—';
+      document.getElementById('stat-model').textContent = model.length > 18 ? model.slice(0, 18) + '…' : model || '—';
+      const grid = document.getElementById('dash-channels');
+      const CHANS = ['telegram', 'discord', 'whatsapp', 'slack', 'email', 'dingtalk', 'feishu', 'qq', 'matrix'];
+      const ICONS = { telegram: '✈️', discord: '🎮', whatsapp: '💬', slack: '💼', email: '📧', dingtalk: '🔔', feishu: '🐦', qq: '🐧', matrix: '🔷' };
+      grid.innerHTML = CHANS.map(n => {
+        const on = !!ch[n]?.enabled;
+        return `<div style="display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--bg3);border-radius:6px;border:1px solid var(--border);font-size:12px">
+      <span>${ICONS[n]}</span><span style="flex:1">${n.charAt(0).toUpperCase() + n.slice(1)}</span>
+      <span class="dot ${on ? 'green' : 'grey'}"></span></div>`;
+      }).join('');
+      try {
+        const s = await (await fetch('/api/status')).json();
+        document.getElementById('stat-agent').textContent = s.agent_running ? 'Running' : 'Idle';
+        document.getElementById('stat-agent').style.color = s.agent_running ? 'var(--success)' : 'var(--muted)';
+      } catch (e) { }
     }
 
-    function appendLog(line) {
-      const el = document.getElementById('wa-log');
-      el.textContent += line + '\n';
-      el.scrollTop = el.scrollHeight;
+    // ── Ollama ────────────────────────────────────────────────────────────────────
+    async function testOllama() {
+      const base = gv('ollama-base') || 'http://localhost:11434';
+      const btn = document.getElementById('ollama-test-btn');
+      const el = document.getElementById('ollama-status');
+      btn.disabled = true; btn.textContent = 'Testing…';
+      el.style.display = 'none';
+      try {
+        const d = await (await fetch('/api/ollama/test?base=' + encodeURIComponent(base))).json();
+        el.className = d.ok ? 'ok' : 'err';
+        el.textContent = (d.ok ? '✅ ' : '❌ ') + d.message;
+        el.style.display = 'block';
+      } catch (e) { el.className = 'err'; el.textContent = '❌ Request failed: ' + e; el.style.display = 'block'; }
+      finally { btn.disabled = false; btn.textContent = '🔌 Test Connection'; }
     }
 
-    function renderQR(data) {
-      // Use qrcode.js to render a proper QR image onto the canvas
-      const canvas = document.getElementById('qr-canvas');
-      if (typeof QRCode !== 'undefined') {
-        QRCode.toCanvas(canvas, data, {
-          width: 220, margin: 2,
-          color: { dark: '#000000', light: '#ffffff' }
-        }, err => { if (err) appendLog('QR render error: ' + err); });
-      } else {
-        // Fallback: show the raw data for manual QR generation
-        appendLog('QR data: ' + data);
-      }
-    }
-
-    // ── Ollama local model picker ────────────────────────────────────────────────────────────
     async function fetchOllamaModels() {
-      const base = document.getElementById('ollama-base').value.trim() || 'http://localhost:11434';
+      const base = gv('ollama-base') || 'http://localhost:11434';
       const btn = document.getElementById('ollama-fetch-btn');
       const errEl = document.getElementById('ollama-error');
       const rowEl = document.getElementById('ollama-model-row');
-      const sel = document.getElementById('ollama-model-select');
-      btn.disabled = true;
-      btn.textContent = '⏳ Fetching...';
-      errEl.style.display = 'none';
-      rowEl.style.display = 'none';
+      btn.disabled = true; btn.textContent = '⏳ Fetching…'; errEl.style.display = 'none'; rowEl.style.display = 'none';
       try {
-        const res = await fetch('/api/ollama/models?' + new URLSearchParams({ base }));
-        const data = await res.json();
-        if (!data.ok || data.models.length === 0) {
-          errEl.textContent = data.error
-            ? '⚠ ' + data.error + (data.hint ? ' — ' + data.hint : '')
-            : '⚠ No models found. Run: ollama pull llama3.2';
+        const d = await (await fetch('/api/ollama/models?base=' + encodeURIComponent(base))).json();
+        if (!d.ok || !d.models.length) {
+          errEl.textContent = '⚠ ' + (d.error ? d.error + ' — ' + d.hint : 'No models found. Run: ollama pull llama3.2');
           errEl.style.display = 'block';
         } else {
-          sel.innerHTML = '<option value="">— select a model —</option>' +
-            data.models.map(m => `<option value="${m}">${m}</option>`).join('');
+          const sel = document.getElementById('ollama-model-select');
+          sel.innerHTML = '<option value="">— select a model —</option>' + d.models.map(m => `<option value="${m}">${m}</option>`).join('');
           rowEl.style.display = 'flex';
           document.getElementById('ollama-tip').style.display = 'block';
         }
-      } catch (e) {
-        errEl.textContent = '⚠ Cannot reach Ollama. Is it running? (ollama serve)';
-        errEl.style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '🔄 Fetch Models';
-      }
+      } catch (e) { errEl.textContent = '⚠ Cannot reach Ollama. Is it running? (ollama serve)'; errEl.style.display = 'block'; }
+      finally { btn.disabled = false; btn.textContent = '🔄 Fetch Models'; }
     }
 
     function applyOllamaModel() {
       const sel = document.getElementById('ollama-model-select');
-      const modelName = sel.value;
-      if (!modelName) return;
-      const base = document.getElementById('ollama-base').value.trim() || 'http://localhost:11434';
-      // Set default model in litellm format
-      document.getElementById('model').value = 'ollama/' + modelName;
-      // Set custom API base to Ollama's OpenAI-compatible endpoint
+      if (!sel.value) return;
+      const base = gv('ollama-base') || 'http://localhost:11434';
+      document.getElementById('model').value = 'ollama/' + sel.value;
       document.getElementById('base-custom').value = base + '/v1';
-      // Nav to provider section so user sees the change
       document.querySelector('[data-section="provider"]').click();
-      showToast('✔ Model set to ollama/' + modelName + '. Click Save Config to apply.', 'ok');
+      showToast('✔ Model set to ollama/' + sel.value + '. Click Save Config to apply.', 'ok');
     }
 
-    // ── Init ──────────────────────────────────────────────────────────────────
+    // ── Gateway ───────────────────────────────────────────────────────────────────
+    let _gwRunning = false;
+    function toggleGateway() {
+      _gwRunning = !_gwRunning;
+      const btn = document.getElementById('gw-btn');
+      btn.textContent = _gwRunning ? '⏹ Stop Gateway' : '▶ Start Gateway';
+      btn.className = 'btn btn-sm ' + (_gwRunning ? 'btn-danger' : 'btn-ghost');
+      showToast(_gwRunning ? 'Gateway started (see Logs)' : 'Gateway stopped', 'ok');
+      if (_gwRunning) appendChatMsg('sys', 'Gateway started. Send a message below to chat.');
+    }
+
+    // ── Live Agent ────────────────────────────────────────────────────────────────
+    function appendChatMsg(role, text) {
+      const box = document.getElementById('chat-messages');
+      if (!box) return;
+      const div = document.createElement('div');
+      div.className = 'msg ' + role;
+      div.textContent = text;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendAgentMessage() {
+      const inp = document.getElementById('chat-input');
+      const msg = inp.value.trim();
+      if (!msg) return;
+      inp.value = '';
+      appendChatMsg('user', msg);
+
+      if (_agentEs) { _agentEs.close(); _agentEs = null; }
+
+      const agentDiv = document.createElement('div');
+      agentDiv.className = 'msg agent';
+      agentDiv.textContent = '⏳ Thinking…';
+      document.getElementById('chat-messages').appendChild(agentDiv);
+      document.getElementById('chat-messages').scrollTop = 9999;
+
+      let text = '';
+      const url = '/api/agent/stream?message=' + encodeURIComponent(msg);
+      _agentEs = new EventSource(url);
+
+      _agentEs.addEventListener('status', e => { agentDiv.textContent = '⏳ ' + JSON.parse(e.data); });
+      _agentEs.addEventListener('chunk', e => {
+        text += JSON.parse(e.data) + '\n';
+        agentDiv.textContent = text.trim();
+        document.getElementById('chat-messages').scrollTop = 9999;
+      });
+      _agentEs.addEventListener('error', e => { appendChatMsg('sys', '⚠ ' + JSON.parse(e.data)); _agentEs.close(); });
+      _agentEs.addEventListener('done', e => {
+        _agentEs.close(); _agentEs = null;
+        if (!text) agentDiv.remove();
+      });
+      _agentEs.onerror = () => { _agentEs.close(); _agentEs = null; };
+    }
+
+    // ── Logs ──────────────────────────────────────────────────────────────────────
+    let _logFilter = 'all';
+    function startLogPolling() { _logsInterval = setInterval(fetchLogs, 2000); fetchLogs(); }
+    function stopLogPolling() { clearInterval(_logsInterval); }
+    async function fetchLogs() {
+      try {
+        const d = await (await fetch('/api/logs?lines=300')).json();
+        const pane = document.getElementById('log-pane');
+        if (!pane) return;
+        const filter = document.getElementById('log-filter')?.value || 'all';
+        let lines = d.lines || [];
+        if (filter !== 'all') lines = lines.filter(l => l.toLowerCase().includes('[' + filter + ']') || l.toLowerCase().includes(filter));
+        pane.textContent = lines.join('\n') || (d.count === 0 ? 'No logs yet. Start the agent or gateway to see activity.' : '');
+        if (document.getElementById('log-autoscroll')?.checked) { pane.scrollTop = pane.scrollHeight; }
+      } catch (e) { }
+    }
+    function clearLogs() { const p = document.getElementById('log-pane'); if (p) p.textContent = ''; }
+
+    // ── Tools ─────────────────────────────────────────────────────────────────────
+    async function loadTools() {
+      try {
+        const d = await (await fetch('/api/tools')).json();
+        _toolsData = d.tools || [];
+        renderTools();
+      } catch (e) { showToast('Failed to load tools: ' + e, 'err'); }
+    }
+
+    function renderTools() {
+      const container = document.getElementById('tools-list');
+      if (!container) return;
+      const cats = {};
+      _toolsData.forEach(t => { (cats[t.category] || (cats[t.category] = [])).push(t); });
+      container.innerHTML = Object.entries(cats).map(([cat, tools]) => `
+    <div style="margin-bottom:6px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">${cat}</div>
+    ${tools.map(t => `
+    <div class="tool-item" id="tool-${t.name}">
+      <div class="tool-meta">
+        <div><span style="font-size:16px">${t.emoji}</span><span class="tool-name" style="margin-left:6px">${t.name}</span><span class="tool-cat">${t.category}</span>
+          <div class="tool-desc">${t.description}</div>
+        </div>
+        <label class="tog" title="Enable/disable tool"><input type="checkbox" ${t.enabled ? 'checked' : ''} onchange="onToolToggle('${t.name}',this.checked)"><span class="tog-sl"></span></label>
+      </div>
+      ${t.actions.length ? `<div class="action-grid">${t.actions.map(a => `
+        <div class="action-item">
+          <div><div style="font-weight:500">${a.name}</div><div style="color:var(--muted);font-size:10px">${a.desc}</div></div>
+          <label class="tog" style="width:32px;height:18px"><input type="checkbox" checked onchange="onActionToggle('${t.name}','${a.name}',this.checked)"><span class="tog-sl"></span></label>
+        </div>`).join('')}</div>` : ''}
+    </div>`).join('')}`).join('');
+    }
+
+    function onToolToggle(name, enabled) {
+      const t = _toolsData.find(x => x.name === name);
+      if (t) t.enabled = enabled;
+    }
+
+    function onActionToggle(tool, action, enabled) {
+      // Just visual for now — action-level granularity saved via disabledActions in future
+    }
+
+    async function saveToolPermissions() {
+      const disabled = _toolsData.filter(t => !t.enabled).map(t => t.name);
+      try {
+        const r = await fetch('/api/tools/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ disabledTools: disabled }) });
+        const d = await r.json();
+        if (d.ok) showToast(`✓ Permissions saved (${disabled.length} disabled)`, 'ok');
+        else showToast('Error: ' + d.message, 'err');
+      } catch (e) { showToast('Save failed: ' + e, 'err'); }
+    }
+
+    // ── WhatsApp QR ───────────────────────────────────────────────────────────────
+    function openWaModal() {
+      document.getElementById('wa-modal').classList.add('open');
+      document.getElementById('wa-log').textContent = '';
+      document.getElementById('wa-status-pill').className = 'pill warn';
+      document.getElementById('wa-status-pill').textContent = '⏳ Connecting…';
+      const canvas = document.getElementById('qr-canvas');
+      const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (_waEs) { _waEs.close(); }
+      _waEs = new EventSource('/api/channels/whatsapp/stream');
+      _waEs.addEventListener('status', e => { appendWaLog('ℹ ' + JSON.parse(e.data)); });
+      _waEs.addEventListener('log', e => { appendWaLog(JSON.parse(e.data)); });
+      _waEs.addEventListener('qr', e => {
+        const pill = document.getElementById('wa-status-pill');
+        pill.className = 'pill warn'; pill.textContent = '📲 Scan with WhatsApp';
+        QRCode.toCanvas(canvas, JSON.parse(e.data), { width: 220, color: { dark: '#000', light: '#fff' } }, () => { });
+      });
+      _waEs.addEventListener('connected', e => {
+        const pill = document.getElementById('wa-status-pill');
+        pill.className = 'pill ok'; pill.textContent = '✅ ' + JSON.parse(e.data);
+        appendWaLog('✅ Connected!');
+      });
+      _waEs.addEventListener('error', e => { appendWaLog('⚠ ' + JSON.parse(e.data)); });
+      _waEs.addEventListener('done', e => { _waEs.close(); _waEs = null; appendWaLog('— ' + JSON.parse(e.data)); });
+      _waEs.onerror = () => { appendWaLog('Connection error'); };
+    }
+    function closeWaModal() { document.getElementById('wa-modal').classList.remove('open'); if (_waEs) { _waEs.close(); _waEs = null; } }
+    function appendWaLog(l) { const el = document.getElementById('wa-log'); el.textContent += l + '\n'; el.scrollTop = el.scrollHeight; }
+    async function stopWaLogin() {
+      await fetch('/api/channels/whatsapp/stop', { method: 'POST' });
+      appendWaLog('— Stopped by user');
+      if (_waEs) { _waEs.close(); _waEs = null; }
+    }
+
+    // ── Chat enter key ────────────────────────────────────────────────────────────
+    document.addEventListener('keydown', e => {
+      const inp = document.getElementById('chat-input');
+      if (document.activeElement === inp && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAgentMessage(); }
+    });
+
+    // ── Chat helpers ─────────────────────────────────────────────────────────────
+    function clearChat() { const el = document.getElementById('chat-messages'); if (el) el.innerHTML = ''; }
+    async function stopAgent() {
+      await fetch('/api/agent/stop', { method: 'POST' });
+      if (_agentEs) { _agentEs.close(); _agentEs = null; }
+      appendChatMsg('sys', 'Agent stopped.');
+    }
+    // ── MCP helper ────────────────────────────────────────────────────────────────
+    async function addMcpServer() {
+      const name = gv('mcp-name'); const cmd = gv('mcp-cmd'); const args = gv('mcp-args');
+      if (!name || !cmd) { showToast('Name and command are required', 'err'); return; }
+      const data = _cfg; // Use _cfg directly, assuming it's up-to-date or will be reloaded
+      data.tools = data.tools || {}; data.tools.mcpServers = data.tools.mcpServers || {};
+      data.tools.mcpServers[name] = { command: cmd, args: args.split(',').map(s => s.trim()).filter(Boolean) };
+      const r = await fetch('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const d = await r.json();
+      if (d.ok) { showToast('✓ MCP server "' + name + '" added', 'ok'); sv('mcp-name', ''); sv('mcp-cmd', ''); sv('mcp-args', ''); }
+      else showToast('Error: ' + d.message, 'err');
+    }
+
+    // ── Boot ──────────────────────────────────────────────────────────────────────
     loadConfig();
   </script>
 </body>
