@@ -985,30 +985,54 @@
         </div>
       </div>
       <div class="card" style="border-color:rgba(0,212,170,.3)">
-        <div class="card-title"><span>🦙</span>Ollama Local Models <span
-            style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px">No API key needed</span></div>
-        <p class="hint" style="margin-bottom:14px">Connect to a local <a href="https://ollama.com"
-            target="_blank">Ollama</a> instance. Must be running: <code>ollama serve</code></p>
+        <div class="card-title"><span>🦙</span>Ollama Local Models <span style="font-size:11px;font-weight:400;color:var(--muted);margin-left:6px">No API key needed</span></div>
+        <!-- Setup guide -->
+        <details style="margin-bottom:14px">
+          <summary style="cursor:pointer;font-size:12px;font-weight:600;color:var(--accent2);user-select:none">📖 Ollama Setup Guide (click to expand)</summary>
+          <div style="margin-top:10px;padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);font-size:12px;line-height:1.7">
+            <p style="font-weight:600;margin-bottom:6px">Step 1 — Install Ollama</p>
+            <p style="color:var(--muted);margin-bottom:4px">On Linux / Android (Termux):</p>
+            <code style="display:block;background:var(--bg2);padding:6px 10px;border-radius:5px;margin-bottom:8px;font-size:11px">curl -fsSL https://ollama.com/install.sh | sh</code>
+            <p style="color:var(--muted);margin-bottom:4px">On macOS / Windows: download from <a href="https://ollama.com" target="_blank">ollama.com</a></p>
+            <hr class="sep">
+            <p style="font-weight:600;margin-bottom:6px">Step 2 — Start Ollama server</p>
+            <code style="display:block;background:var(--bg2);padding:6px 10px;border-radius:5px;margin-bottom:8px;font-size:11px">ollama serve</code>
+            <p style="color:var(--muted);margin-bottom:4px">Keep this running in a separate terminal. Default port: 11434.</p>
+            <hr class="sep">
+            <p style="font-weight:600;margin-bottom:6px">Step 3 — Pull a model</p>
+            <code style="display:block;background:var(--bg2);padding:6px 10px;border-radius:5px;margin-bottom:4px;font-size:11px">ollama pull llama3.2          # 2GB, fast</code>
+            <code style="display:block;background:var(--bg2);padding:6px 10px;border-radius:5px;margin-bottom:4px;font-size:11px">ollama pull qwen2.5:3b        # 2GB, multilingual</code>
+            <code style="display:block;background:var(--bg2);padding:6px 10px;border-radius:5px;margin-bottom:8px;font-size:11px">ollama pull gemma3:4b         # 3GB, Google</code>
+            <p style="color:var(--muted)">Verify with: <code>ollama list</code></p>
+            <hr class="sep">
+            <p style="font-weight:600;margin-bottom:6px">Step 4 — Configure MOBOT</p>
+            <ol style="padding-left:18px;color:var(--muted);line-height:2">
+              <li>Enter the Ollama URL above (default: <code>http://localhost:11434</code>)</li>
+              <li>Click <b>🔌 Test Connection</b> — should show ✅</li>
+              <li>Click <b>🔄 Fetch Models</b> — select your model</li>
+              <li>Click <b>✔ Use this model</b> — fields auto-fill</li>
+              <li>Click <b>💾 Save Config</b> at the top</li>
+              <li>Go to <b>🤖 Live Agent</b> and start chatting!</li>
+            </ol>
+            <hr class="sep">
+            <p style="font-weight:600;margin-bottom:4px">📡 Using Ollama on another device (e.g. PC → Android)?</p>
+            <p style="color:var(--muted);margin-bottom:4px">Start Ollama with LAN access on the PC:</p>
+            <code style="display:block;background:var(--bg2);padding:6px 10px;border-radius:5px;font-size:11px">OLLAMA_HOST=0.0.0.0 ollama serve</code>
+            <p style="color:var(--muted);margin-top:4px">Then set URL to: <code>http://&lt;PC-IP&gt;:11434</code></p>
+          </div>
+        </details>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end">
-          <div class="field" style="flex:1;min-width:200px"><label>Ollama URL</label><input id="ollama-base"
-              value="http://localhost:11434" placeholder="http://localhost:11434"></div>
+          <div class="field" style="flex:1;min-width:200px"><label>Ollama URL</label><input id="ollama-base" value="http://localhost:11434" placeholder="http://localhost:11434"></div>
           <button class="btn btn-ghost btn-sm" id="ollama-test-btn" onclick="testOllama()">🔌 Test Connection</button>
-          <button class="btn btn-ghost btn-sm" id="ollama-fetch-btn" onclick="fetchOllamaModels()">🔄 Fetch
-            Models</button>
+          <button class="btn btn-ghost btn-sm" id="ollama-fetch-btn" onclick="fetchOllamaModels()">🔄 Fetch Models</button>
         </div>
         <div id="ollama-status"></div>
-        <div id="ollama-error"
-          style="display:none;font-size:12px;color:var(--danger);margin-bottom:10px;padding:7px 12px;background:rgba(248,81,73,.08);border-radius:6px;border:1px solid rgba(248,81,73,.25)">
-        </div>
+        <div id="ollama-error" style="display:none;font-size:12px;color:var(--danger);margin-bottom:10px;padding:7px 12px;background:rgba(248,81,73,.08);border-radius:6px;border:1px solid rgba(248,81,73,.25)"></div>
         <div id="ollama-model-row" style="display:none;gap:10px;align-items:flex-end;flex-wrap:wrap">
-          <div class="field" style="flex:1;min-width:180px"><label>Available Models</label><select
-              id="ollama-model-select">
-              <option value="">— select —</option>
-            </select></div>
+          <div class="field" style="flex:1;min-width:180px"><label>Available Models</label><select id="ollama-model-select"><option value="">— select —</option></select></div>
           <button class="btn btn-primary btn-sm" onclick="applyOllamaModel()">✔ Use this model</button>
         </div>
-        <p id="ollama-tip" style="display:none;font-size:11px;color:var(--muted);margin-top:8px">Tip: Click "Use this
-          model" → Default Model &amp; API Base are auto-filled → Save Config.</p>
+        <p id="ollama-tip" style="display:none;font-size:11px;color:var(--muted);margin-top:8px">✔ Model &amp; API Base auto-filled. Click <b>💾 Save Config</b> at the top, then go to <b>🤖 Live Agent</b>.</p>
       </div>
     </div>
 
@@ -1689,14 +1713,15 @@
       const sel = document.getElementById('ollama-model-select');
       if (!sel.value) return;
       const base = gv('ollama-base') || 'http://localhost:11434';
-      document.getElementById('model').value = 'ollama/' + sel.value;
+      // Ollama's /v1 OpenAI-compat API uses BARE model names — no 'ollama/' prefix!
+      document.getElementById('model').value = sel.value;
       document.getElementById('base-custom').value = base + '/v1';
-      // Ollama needs no real key — set 'ollama' as a dummy so validators pass
-      if (!gv('key-custom')) document.getElementById('key-custom').value = 'ollama';
-      // Use 'custom' provider so mobot routes via CustomProvider (skips key requirement)
+      // Use 'custom' provider → CustomProvider sends bare model name directly to /v1
       document.getElementById('provider-override').value = 'custom';
+      // Ollama needs no real API key — dummy 'ollama' keeps validators happy
+      if (!gv('key-custom')) document.getElementById('key-custom').value = 'ollama';
       nav(document.querySelector('[data-section="provider"]'));
-      showToast('✔ Model set to ollama/' + sel.value + '. Save Config to apply.', 'ok');
+      showToast('✔ Model set to ' + sel.value + '. Save Config to apply.', 'ok');
     }
 
     // ── Gateway ───────────────────────────────────────────────────────────────────
