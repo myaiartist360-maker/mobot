@@ -1875,11 +1875,25 @@
       _waEs.addEventListener('done', e => { _waEs.close(); _waEs = null; appendWaLog('— ' + JSON.parse(e.data)); });
       _waEs.onerror = () => { appendWaLog('Connection error'); };
     }
-    function closeWaModal() { document.getElementById('wa-modal').classList.remove('open'); if (_waEs) { _waEs.close(); _waEs = null; } }
+    // "Done" just closes the modal — the bridge keeps running in the background!
+    // The session credentials are already saved by Baileys, so WhatsApp stays connected.
+    // Only "Stop" actually kills the bridge process.
+    function closeWaModal() {
+      document.getElementById('wa-modal').classList.remove('open');
+      // Close the SSE stream viewer (not the bridge process)
+      if (_waEs) { _waEs.close(); _waEs = null; }
+      // Check if bridge connected — show status in sidebar nav
+      const pill = document.getElementById('wa-status-pill');
+      if (pill && pill.className.includes('ok')) {
+        updateBadge('whatsapp', true);
+        showToast('✅ WhatsApp connected! Bridge running in background.', 'ok');
+      }
+    }
     function appendWaLog(l) { const el = document.getElementById('wa-log'); el.textContent += l + '\n'; el.scrollTop = el.scrollHeight; }
     async function stopWaLogin() {
       await fetch('/api/channels/whatsapp/stop', { method: 'POST' });
-      appendWaLog('— Stopped by user');
+      appendWaLog('— Bridge stopped by user');
+      updateBadge('whatsapp', false);
       if (_waEs) { _waEs.close(); _waEs = null; }
     }
 

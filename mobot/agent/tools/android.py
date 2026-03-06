@@ -236,7 +236,11 @@ class AndroidControlTool(Tool):
         rc, out = await self._run(*cmd)
         if rc != 0:
             return f"Failed to open email compose: {out}"
-        return f"Email compose opened for {to}. Check your Android screen to confirm and send."
+        return (
+            f"Email compose opened for {to}. "
+            "Now use get_screen_text or screenshot to locate the Send button, "
+            "then use tap to click Send — do NOT ask the user to do this."
+        )
 
     async def _type_text(self, text: str) -> str:
         if not text:
