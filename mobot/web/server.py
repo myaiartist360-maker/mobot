@@ -44,9 +44,48 @@ _wa_lock = threading.Lock()
 _agent_proc: subprocess.Popen | None = None
 _agent_lock = threading.Lock()
 
+# Always-on gateway process (mobot gateway)
+_gw_proc: subprocess.Popen | None = None
+_gw_lock = threading.Lock()
+
 # In-memory log ring buffer (last 500 lines)
 _log_buffer: collections.deque[str] = collections.deque(maxlen=500)
 _log_lock = threading.Lock()
+
+
+def _kill_process_on_port(port: int) -> None:
+    """Best-effort: kill any process listening on the given TCP port."""
+    try:
+        import signal as _signal
+        # Linux / Android / macOS: use fuser
+        result = subprocess.run(
+            ["fuser", "-k", f"{port}/tcp"],
+            capture_output=True, timeout=5,
+        )
+        if result.returncode == 0:
+            time.sleep(0.5)  # give the OS a moment to release the port
+    except FileNotFoundError:
+        pass  # fuser not available — try lsof
+    except Exception:
+        pass
+    try:
+        # Fallback: lsof (macOS / some Linuxes)
+        r = subprocess.run(
+            ["lsof", "-ti", f"tcp:{port}"],
+            capture_output=True, text=True, timeout=5,
+        )
+        if r.returncode == 0:
+            for pid_str in r.stdout.strip().split():
+                try:
+                    os.kill(int(pid_str), 15)  # SIGTERM
+                except Exception:
+                    pass
+            time.sleep(0.5)
+    except FileNotFoundError:
+        pass
+    except Exception:
+        pass
+
 
 
 def _log(line: str) -> None:
@@ -257,7 +296,21 @@ def _stream_whatsapp_login(wfile, flush_fn):
     if token:
         env["BRIDGE_TOKEN"] = token
 
+    # ── Kill any stale process already on port 3001 (EADDRINUSE prevention) ──
+    with _wa_lock:
+        if _wa_proc and _wa_proc.poll() is None:
+            _log("[wa] Terminating existing bridge before restart")
+            _wa_proc.terminate()
+            try:
+                _wa_proc.wait(timeout=3)
+            except Exception:
+                _wa_proc.kill()
+
+    sse("status", "Clearing port 3001…")
+    _kill_process_on_port(3001)
+
     sse("status", "Starting bridge…")
+    connected = False
     try:
         with _wa_lock:
             _wa_proc = subprocess.Popen(
@@ -277,18 +330,20 @@ def _stream_whatsapp_login(wfile, flush_fn):
             else:
                 sse("log", line)
             if "authenticated" in line.lower() or "connected" in line.lower():
-                sse("connected", "WhatsApp connected!")
+                if not connected:
+                    connected = True
+                    sse("connected", "WhatsApp connected!")
+                    _log("[wa] WhatsApp connected")
         proc.wait()
-        sse("done", "Process ended")
+        msg = "Session saved — bridge is running in background" if connected else "Process ended"
+        sse("done", msg)
     except FileNotFoundError:
         sse("error", "npm not found — install Node.js")
         sse("done", "failed")
     except Exception as e:
         sse("error", str(e))
         sse("done", "failed")
-    finally:
-        with _wa_lock:
-            _wa_proc = None
+    # NOTE: _wa_proc intentionally NOT cleared in finally — bridge keeps running
 
 
 # ── Live agent stream ─────────────────────────────────────────────────────────
@@ -398,6 +453,8 @@ class _Handler(BaseHTTPRequestHandler):
                 wa_running = _wa_proc is not None and _wa_proc.poll() is None
             with _agent_lock:
                 agent_running = _agent_proc is not None and _agent_proc.poll() is None
+            with _gw_lock:
+                gw_running = _gw_proc is not None and _gw_proc.poll() is None
             self._json(200, {
                 "version": __version__,
                 "config_path": str(_config_path()),
@@ -405,6 +462,7 @@ class _Handler(BaseHTTPRequestHandler):
                 "whatsapp_bridge_dir": str(bridge_dir) if bridge_dir else None,
                 "whatsapp_login_active": wa_running,
                 "agent_running": agent_running,
+                "gateway_running": gw_running,
             })
 
         elif path == "/api/ollama/models":
@@ -520,15 +578,55 @@ class _Handler(BaseHTTPRequestHandler):
                 else:
                     self._json(200, {"ok": True, "message": "No active agent"})
 
+        elif path == "/api/gateway/start":
+            global _gw_proc
+            with _gw_lock:
+                if _gw_proc and _gw_proc.poll() is None:
+                    self._json(200, {"ok": True, "message": "Gateway already running"})
+                    return
+            mobot = _mobot_bin()
+            cmd = mobot.split() + ["gateway"]
+            try:
+                with _gw_lock:
+                    _gw_proc = subprocess.Popen(
+                        cmd,
+                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                        text=True, bufsize=1,
+                    )
+
+                def _tail():
+                    for line in _gw_proc.stdout:
+                        _log(f"[gateway] {line.rstrip()}")
+
+                threading.Thread(target=_tail, daemon=True).start()
+                _log("[gateway] Started")
+                self._json(200, {"ok": True, "message": "Gateway started"})
+            except Exception as e:
+                self._json(500, {"ok": False, "message": str(e)})
+
+        elif path == "/api/gateway/stop":
+            global _gw_proc
+            with _gw_lock:
+                if _gw_proc and _gw_proc.poll() is None:
+                    _gw_proc.terminate()
+                    _gw_proc = None
+                    _log("[gateway] Stopped")
+                    self._json(200, {"ok": True, "message": "Gateway stopped"})
+                else:
+                    self._json(200, {"ok": True, "message": "Gateway not running"})
+
         elif path == "/api/channels/whatsapp/stop":
             global _wa_proc
             with _wa_lock:
                 if _wa_proc and _wa_proc.poll() is None:
                     _wa_proc.terminate()
                     _wa_proc = None
-                    self._json(200, {"ok": True, "message": "Login process stopped"})
+                    _log("[wa] Bridge stopped by user")
+                    self._json(200, {"ok": True, "message": "WhatsApp bridge stopped"})
                 else:
-                    self._json(200, {"ok": True, "message": "No active login process"})
+                    # Also try killing port 3001 for any external bridge
+                    _kill_process_on_port(3001)
+                    self._json(200, {"ok": True, "message": "No active bridge (killed port 3001)"})
 
         elif path == "/api/shutdown":
             self._json(200, {"ok": True})
@@ -539,14 +637,27 @@ class _Handler(BaseHTTPRequestHandler):
 
 
 class _MOBOTServer(HTTPServer):
-    pass
+    allow_reuse_address = True
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
 
 def run(port: int = 7891, open_browser: bool = True, host: str = "127.0.0.1") -> None:
     """Start the MOBOT web config server."""
-    server = _MOBOTServer((host, port), _Handler)
+    # Attempt to cleanly kill any running instance on this port first
+    _kill_process_on_port(port)
+
+    try:
+        server = _MOBOTServer((host, port), _Handler)
+    except OSError as e:
+        if "Address already in use" in str(e) or getattr(e, "errno", 0) == 98:
+            print(f"\n[!] Error: Port {port} is already in use.")
+            print("    Another instance of 'mobot web' might be running in the background.")
+            print("    Try closing it, or run this command in a new terminal to force kill it:")
+            print(f"        fuser -k {port}/tcp")
+            print("    (You may need to run: pkg install psmisc)\n")
+            sys.exit(1)
+        raise
 
     url = f"http://{host}:{port}"
     print(f"\n🤖 MOBOT Web Config UI")

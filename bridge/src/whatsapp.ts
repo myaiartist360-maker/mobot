@@ -58,7 +58,7 @@ export class WhatsAppClient {
       version,
       logger,
       printQRInTerminal: false,
-      browser: ['nanobot', 'cli', VERSION],
+      browser: ['mobot', 'cli', VERSION],
       syncFullHistory: false,
       markOnlineOnConnect: false,
     });
@@ -106,7 +106,8 @@ export class WhatsAppClient {
     this.sock.ev.on('creds.update', saveCreds);
 
     // Handle incoming messages
-    this.sock.ev.on('messages.upsert', async ({ messages, type }: { messages: any[]; type: string }) => {
+    this.sock.ev.on('messages.upsert', async (upsert: any) => {
+      const { messages, type } = upsert;
       if (type !== 'notify') return;
 
       for (const msg of messages) {
@@ -124,7 +125,7 @@ export class WhatsAppClient {
         this.options.onMessage({
           id: msg.key.id || '',
           sender: msg.key.remoteJid || '',
-          pn: msg.key.remoteJidAlt || '',
+          pn: msg.key.remoteJid || '', // Baileys puts the number in remoteJid
           content,
           timestamp: msg.messageTimestamp as number,
           isGroup,
