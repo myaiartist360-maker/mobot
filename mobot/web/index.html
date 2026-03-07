@@ -843,6 +843,8 @@
     <a class="nav-item" data-section="liveagent" onclick="nav(this)"><span class="ico">🤖</span>Live Agent</a>
     <a class="nav-item" data-section="logs" onclick="nav(this)"><span class="ico">📋</span>Logs</a>
     <div class="nav-grp">Channels</div>
+    <a class="nav-item" data-section="webchat" onclick="nav(this)"><span class="ico">🌐</span>WebChat <span
+        id="badge-webchat" class="badge off">off</span></a>
     <a class="nav-item" data-section="telegram" onclick="nav(this)"><span class="ico">✈️</span>Telegram <span
         id="badge-telegram" class="badge off">off</span></a>
     <a class="nav-item" data-section="discord" onclick="nav(this)"><span class="ico">🎮</span>Discord <span
@@ -908,6 +910,8 @@
             Key</button>
           <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=whatsapp]'))">💬 Connect
             WhatsApp</button>
+          <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=webchat]'))">🌐 Connect
+            WebChat</button>
           <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=logs]'))">📋 View
             Logs</button>
           <button class="btn btn-ghost" onclick="nav(document.querySelector('[data-section=tools]'))">🔧 Tool
@@ -1172,6 +1176,29 @@
       </div>
     </div>
 
+    <!-- WEBCHAT -->
+    <div id="section-webchat" class="section">
+      <div class="card">
+        <div class="card-title"><span>🌐</span>Remote WebChat</div>
+        <div class="tog-row">
+          <div>
+            <div class="tog-lbl">Enable WebChat</div>
+            <div class="tog-desc">A lightweight web-based remote control chat interface.</div>
+          </div><label class="tog"><input id="webchat-enabled" type="checkbox"
+              onchange="updateBadge('webchat',this.checked)"><span class="tog-sl"></span></label>
+        </div>
+        <div class="ch-fields">
+          <div class="form-grid">
+            <div class="field"><label>Port</label><input id="wc-port" type="number" placeholder="7892"></div>
+            <div class="field"><label>Host (0.0.0.0 to expose on LAN)</label><input id="wc-host" placeholder="0.0.0.0"></div>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:10px">📲 Scan the QR code to open the webchat UI on your device.</p>
+            <button class="btn btn-primary" onclick="openWcModal()">📱 Show WebChat QR</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- TELEGRAM -->
     <div id="section-telegram" class="section">
       <div class="card">
@@ -1425,6 +1452,20 @@
   <!-- TOAST -->
   <div id="toast"></div>
 
+  <!-- WC MODAL -->
+  <div class="modal-bg" id="wc-modal">
+    <div class="modal" style="text-align:center;">
+      <span class="modal-x" onclick="closeWcModal()">✕</span>
+      <div class="modal-title" style="justify-content:center;">🌐 Connect WebChat</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Scan to chat from your phone, or click the link.</p>
+      <div class="qr-wrap"><canvas id="wc-qr-canvas" width="220" height="220"></canvas></div>
+      <a id="wc-link" href="#" target="_blank" style="font-size:14px;font-weight:600;display:block;margin-top:10px">Open WebChat UI</a>
+      <div style="margin-top:16px;">
+        <button class="btn btn-primary btn-sm" onclick="closeWcModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
   <!-- WA MODAL -->
   <div class="modal-bg" id="wa-modal">
     <div class="modal">
@@ -1544,12 +1585,15 @@
       sc('termux-api', an.termuxApi !== false);
       sc('restrict-ws', a.restrictToWorkspace || false);
 
-      ['telegram', 'discord', 'whatsapp', 'slack', 'email', 'dingtalk', 'feishu', 'qq', 'matrix'].forEach(name => {
+      ['webchat', 'telegram', 'discord', 'whatsapp', 'slack', 'email', 'dingtalk', 'feishu', 'qq', 'matrix'].forEach(name => {
         const d = ch[name] || {};
         sc(name + '-enabled', !!d.enabled);
         updateBadge(name, !!d.enabled);
       });
 
+      // webchat
+      sv('wc-port', (ch.webchat || {}).port || '');
+      sv('wc-host', (ch.webchat || {}).host || '');
       // telegram
       sv('tg-token', (ch.telegram || {}).token || '');
       sv('tg-allowfrom', arr(ch.telegram?.allowFrom));
@@ -1606,6 +1650,7 @@
     function buildConfig() {
       const ch = {};
       function chk(name, obj) { if (gc(name + '-enabled')) ch[name] = { ...obj, enabled: true }; }
+      chk('webchat', { port: +gv('wc-port') || 7892, host: gv('wc-host') || '0.0.0.0' });
       chk('telegram', { token: gv('tg-token'), allowFrom: toArr(gv('tg-allowfrom')), proxy: gv('tg-proxy') || undefined });
       chk('discord', { token: gv('dc-token'), allowFrom: toArr(gv('dc-allowfrom')) });
       if (gc('wa-enabled')) ch.whatsapp = { enabled: true, bridgeUrl: gv('wa-bridge'), allowFrom: toArr(gv('wa-allowfrom')) };
@@ -1657,8 +1702,8 @@
       const model = (c.agents || {}).defaults?.model || '—';
       document.getElementById('stat-model').textContent = model.length > 18 ? model.slice(0, 18) + '…' : model || '—';
       const grid = document.getElementById('dash-channels');
-      const CHANS = ['telegram', 'discord', 'whatsapp', 'slack', 'email', 'dingtalk', 'feishu', 'qq', 'matrix'];
-      const ICONS = { telegram: '✈️', discord: '🎮', whatsapp: '💬', slack: '💼', email: '📧', dingtalk: '🔔', feishu: '🐦', qq: '🐧', matrix: '🔷' };
+      const CHANS = ['webchat', 'telegram', 'discord', 'whatsapp', 'slack', 'email', 'dingtalk', 'feishu', 'qq', 'matrix'];
+      const ICONS = { webchat: '🌐', telegram: '✈️', discord: '🎮', whatsapp: '💬', slack: '💼', email: '📧', dingtalk: '🔔', feishu: '🐦', qq: '🐧', matrix: '🔷' };
       grid.innerHTML = CHANS.map(n => {
         const on = !!ch[n]?.enabled;
         return `<div style="display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--bg3);border-radius:6px;border:1px solid var(--border);font-size:12px">
@@ -1847,6 +1892,18 @@
         else showToast('Error: ' + d.message, 'err');
       } catch (e) { showToast('Save failed: ' + e, 'err'); }
     }
+
+    // ── WebChat QR ───────────────────────────────────────────────────────────────
+    function openWcModal() {
+      document.getElementById('wc-modal').classList.add('open');
+      const port = gv('wc-port') || 7892;
+      const url = `http://${window.location.hostname}:${port}/`;
+      document.getElementById('wc-link').href = url;
+      document.getElementById('wc-link').textContent = url;
+      const canvas = document.getElementById('wc-qr-canvas');
+      QRCode.toCanvas(canvas, url, { width: 220, color: { dark: '#000', light: '#fff' } }, () => { });
+    }
+    function closeWcModal() { document.getElementById('wc-modal').classList.remove('open'); }
 
     // ── WhatsApp QR ───────────────────────────────────────────────────────────────
     function openWaModal() {

@@ -137,6 +137,18 @@ class ChannelManager:
             except ImportError as e:
                 logger.warning("QQ channel not available: {}", e)
 
+        # WebChat channel
+        if self.config.channels.webchat.enabled:
+            try:
+                from mobot.channels.webchat import WebChatChannel
+                self.channels["webchat"] = WebChatChannel(
+                    self.config.channels.webchat,
+                    self.bus,
+                )
+                logger.info("WebChat channel enabled")
+            except ImportError as e:
+                logger.warning("WebChat channel not available: {}", e)
+
         # Matrix channel
         if self.config.channels.matrix.enabled:
             try:

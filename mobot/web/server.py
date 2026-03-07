@@ -545,6 +545,7 @@ class _Handler(BaseHTTPRequestHandler):
             self._send(404, "text/plain", "Not found")
 
     def do_POST(self):
+        global _agent_proc, _gw_proc, _wa_proc
         path = self.path.split("?")[0]
 
         if path == "/api/config":
@@ -569,7 +570,6 @@ class _Handler(BaseHTTPRequestHandler):
                 self._json(500, {"ok": False, "message": str(e)})
 
         elif path == "/api/agent/stop":
-            global _agent_proc
             with _agent_lock:
                 if _agent_proc and _agent_proc.poll() is None:
                     _agent_proc.terminate()
@@ -579,7 +579,6 @@ class _Handler(BaseHTTPRequestHandler):
                     self._json(200, {"ok": True, "message": "No active agent"})
 
         elif path == "/api/gateway/start":
-            global _gw_proc
             with _gw_lock:
                 if _gw_proc and _gw_proc.poll() is None:
                     self._json(200, {"ok": True, "message": "Gateway already running"})
@@ -605,7 +604,6 @@ class _Handler(BaseHTTPRequestHandler):
                 self._json(500, {"ok": False, "message": str(e)})
 
         elif path == "/api/gateway/stop":
-            global _gw_proc
             with _gw_lock:
                 if _gw_proc and _gw_proc.poll() is None:
                     _gw_proc.terminate()
@@ -616,7 +614,6 @@ class _Handler(BaseHTTPRequestHandler):
                     self._json(200, {"ok": True, "message": "Gateway not running"})
 
         elif path == "/api/channels/whatsapp/stop":
-            global _wa_proc
             with _wa_lock:
                 if _wa_proc and _wa_proc.poll() is None:
                     _wa_proc.terminate()

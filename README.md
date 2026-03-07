@@ -23,11 +23,12 @@
 
 | Feature | Description |
 |---------|-------------|
+| 🌐 **Remote Web Chat** | Lightweight web-based remote control chat interface |
 | 🌐 **`mobot web`** | Browser-based config UI — easiest way to set up MOBOT |
 | 📲 **WhatsApp QR in browser** | Scan WhatsApp QR code directly from the web UI |
 | 🦙 **Ollama local models** | Pick and configure locally-running Ollama models, no API key needed |
 | 📱 **Android control** | Tap, swipe, screenshot, launch apps — all via natural language |
-| 🔌 **9 chat channels** | Telegram, Discord, WhatsApp, Slack, Email, DingTalk, Feishu, QQ, Matrix |
+| 🔌 **10 chat channels** | WebChat, Telegram, Discord, WhatsApp, Slack, Email, DingTalk, Feishu, QQ, Matrix |
 
 ---
 
@@ -61,6 +62,16 @@ Set API keys for OpenRouter, Anthropic, OpenAI, Gemini, DeepSeek, Groq, or any c
 ![MOBOT Web UI — Agent settings](docs/web_agent.png)
 
 Configure max tokens, temperature, memory window, workspace directory, and reasoning effort. Channel badges in the sidebar show what's enabled at a glance.
+
+### Remote Web Chat (from Termux)
+
+Control your Termux agent remotely from any PC or tablet on the same Wi-Fi network:
+
+1. **Start the Web UI:** Run `mobot web --host 0.0.0.0` in Termux.
+2. **Configure:** Open the web UI on your phone (`http://localhost:7891`), navigate to **Channels > WebChat**.
+3. **Enable:** Toggle WebChat on, keep Host as `0.0.0.0`, and click **Save Config**.
+4. **Start Agent:** Back in Termux, run `mobot gateway`.
+5. **Connect:** Click **📱 Show WebChat QR** in the web UI, then scan it with your other device to start chatting!
 
 ### WhatsApp QR Onboarding
 

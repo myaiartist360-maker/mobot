@@ -652,6 +652,14 @@ def channels_status():
     table.add_column("Enabled", style="green")
     table.add_column("Configuration", style="yellow")
 
+    # WebChat
+    wc = config.channels.webchat
+    table.add_row(
+        "WebChat",
+        "✓" if wc.enabled else "✗",
+        f"port: {wc.port}"
+    )
+
     # WhatsApp
     wa = config.channels.whatsapp
     table.add_row(

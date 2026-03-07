@@ -23,6 +23,15 @@ class WhatsAppConfig(Base):
     allow_from: list[str] = Field(default_factory=list)  # Allowed phone numbers
 
 
+class WebChatConfig(Base):
+    """Remote Web Chat channel configuration."""
+
+    enabled: bool = False
+    port: int = 7892
+    host: str = "0.0.0.0"
+    allow_from: list[str] = Field(default_factory=list)  # Currently unused for webchat
+
+
 class TelegramConfig(Base):
     """Telegram channel configuration."""
 
@@ -205,6 +214,7 @@ class ChannelsConfig(Base):
 
     send_progress: bool = True    # stream agent's text progress to the channel
     send_tool_hints: bool = False  # stream tool-call hints (e.g. read_file("…"))
+    webchat: WebChatConfig = Field(default_factory=WebChatConfig)
     whatsapp: WhatsAppConfig = Field(default_factory=WhatsAppConfig)
     telegram: TelegramConfig = Field(default_factory=TelegramConfig)
     discord: DiscordConfig = Field(default_factory=DiscordConfig)
