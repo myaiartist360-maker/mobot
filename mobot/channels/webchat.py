@@ -1,7 +1,6 @@
 """Remote Web Chat channel implementation over WebSockets."""
 
 import asyncio
-import http
 import json
 import base64
 import time
@@ -11,6 +10,8 @@ from pathlib import Path
 from loguru import logger
 import websockets
 from websockets.server import serve
+from websockets.http11 import Response, Request
+from websockets.datastructures import Headers
 
 from mobot.bus.events import OutboundMessage
 from mobot.bus.queue import MessageBus
@@ -31,7 +32,8 @@ class WebChatChannel(BaseChannel):
         super().__init__(config, bus)
         self.config = config
         self._server = None
-        self._clients: set[websockets.WebSocketServerProtocol] = set()
+        # Map session_id → websocket so outbound messages can be routed to the right client
+        self._sessions: dict[str, websockets.ServerConnection] = {}
         
         # Load UI HTML
         ui_path = Path(__file__).parent / "webchat_ui.html"
@@ -66,41 +68,44 @@ class WebChatChannel(BaseChannel):
             self._server = None
             
         # Disconnect all clients
-        for client in list(self._clients):
-            await client.close()
-        self._clients.clear()
+        for ws in list(self._sessions.values()):
+            await ws.close()
+        self._sessions.clear()
 
-    async def _process_http_request(self, connection, request):
-        """Serve the HTML UI on HTTP GET /."""
+    async def _process_http_request(self, connection, request: Request):
+        """Serve the HTML UI on HTTP GET /. Return None to allow WebSocket upgrade."""
         if request.path == "/":
-            return connection.respond(
-                http.HTTPStatus.OK,
-                self._ui_html
-            )
-        # For WebSocket upgrade, return None
+            headers = Headers([
+                ("Content-Type", "text/html; charset=utf-8"),
+                ("Content-Length", str(len(self._ui_html))),
+                ("Connection", "close"),
+            ])
+            return Response(status_code=200, headers=headers, body=self._ui_html)
+        # For all other paths (including WebSocket upgrade), return None to proceed normally
         return None
 
-    async def _handle_ws_connection(self, websocket):
+    async def _handle_ws_connection(self, websocket) -> None:
         """Handle incoming WebSocket connection from the Web UI."""
-        self._clients.add(websocket)
         client_address = websocket.remote_address
         logger.info(f"WebChat client connected: {client_address}")
         
-        # We can use the client IP as their unique chat_id/sender_id
+        # Use the client IP as their unique session_id (one session per IP)
         session_id = f"webchat_{client_address[0]}"
+        self._sessions[session_id] = websocket
 
         try:
             async for message in websocket:
                 if isinstance(message, str):
                     await self._process_text_message(message, session_id)
                 elif isinstance(message, bytes):
-                    pass # We expect JSON strings for both text and file uploads mapped as JSON
+                    # We expect JSON strings; binary frames are decoded as text
+                    await self._process_text_message(message.decode("utf-8", errors="replace"), session_id)
         except websockets.exceptions.ConnectionClosed:
             logger.info(f"WebChat client disconnected: {client_address}")
         except Exception as e:
             logger.error(f"WebChat client error: {e}")
         finally:
-            self._clients.discard(websocket)
+            self._sessions.pop(session_id, None)
 
     async def _process_text_message(self, message: str, session_id: str) -> None:
         """Process an incoming message from the web UI."""
@@ -143,14 +148,23 @@ class WebChatChannel(BaseChannel):
                 chat_id=session_id,
                 content=content,
                 media=media_paths,
-                metadata={"source": "webchat"}
+                metadata={"source": "webchat"},
+                session_key=session_id,  # Ensures outbound routing maps back to this websocket
             )
         except json.JSONDecodeError:
             logger.warning(f"Invalid JSON received from webchat: {message[:50]}...")
 
     async def send(self, msg: OutboundMessage) -> None:
-        """Send message out to WebChat clients."""
-        if not self._running or not self._clients:
+        """Send message out to the WebChat client that originated the conversation."""
+        if not self._running:
+            return
+
+        # Route to the specific session that sent the original message.
+        # OutboundMessage.chat_id is set to session_id from _handle_message call.
+        session_id = msg.chat_id
+        websocket = self._sessions.get(session_id)
+        if not websocket:
+            logger.debug(f"WebChat: no active session for {session_id!r}, dropping outbound message")
             return
 
         payload = {
@@ -173,15 +187,14 @@ class WebChatChannel(BaseChannel):
                                 "data": f"data:{mime_type};base64,{b64}"
                             })
                         else:
-                            # Non-image, just send the path as text
+                            # Non-image: mention the file in text
                             payload["text"] += f"\n[File: {p.name}]"
                     except Exception as e:
                         logger.error(f"Failed to send media via webchat: {e}")
 
         payload_str = json.dumps(payload)
-        
-        for client in self._clients:
-            try:
-                await client.send(payload_str)
-            except Exception as e:
-                logger.error(f"Failed to send to webchat client: {e}")
+        try:
+            await websocket.send(payload_str)
+        except Exception as e:
+            logger.error(f"Failed to send to webchat session {session_id}: {e}")
+            self._sessions.pop(session_id, None)

@@ -174,7 +174,7 @@ The web UI lets you:
 - **Set LLM API key** (OpenRouter, Anthropic, OpenAI, Gemini, DeepSeek, Groq, or custom)
 - **Connect local Ollama models** (fetch model list live, no API key needed)
 - **Connect WhatsApp** by scanning QR code directly in the browser
-- **Enable all 9 chat channels** with toggle switches
+- **Enable all 10 chat channels** with toggle switches
 - **Tune agent settings** and Android options
 
 **Or configure manually** (`~/.mobot/config.json`)
@@ -240,6 +240,7 @@ Configure any channel through the web UI (`mobot web`) or manually:
 
 | Channel | What you need |
 |---------|---------------|
+| **WebChat** | Enable in config, point browser to `http://<host>:<port>/` |
 | **Telegram** | Bot token from @BotFather |
 | **Discord** | Bot token + Message Content intent |
 | **WhatsApp** | QR code scan via web UI (Node.js ≥18 required) |
@@ -249,6 +250,38 @@ Configure any channel through the web UI (`mobot web`) or manually:
 | **DingTalk** | App Key + App Secret |
 | **QQ** | App ID + App Secret |
 | **Matrix** | Access token + homeserver |
+
+<details>
+<summary><b>WebChat</b> — Remote access from any device</summary>
+
+The simplest way to control MOBOT from a PC, tablet, or any browser — no app needed.
+
+**1.** Enable WebChat in config (or via `mobot web` → Channels → WebChat):
+
+```json
+{
+  "channels": {
+    "webchat": {
+      "enabled": true,
+      "port": 7892,
+      "host": "0.0.0.0",
+      "allowFrom": ["*"]
+    }
+  }
+}
+```
+
+**2.** Start the gateway:
+```bash
+mobot gateway
+```
+
+**3.** Open `http://localhost:7892/` in your browser — or scan the QR code from the Admin UI (`mobot web` → Channels → WebChat → 📱 Show WebChat QR) to open it on your phone.
+
+> Each browser tab/device gets its own isolated session — replies only go to the client that sent the message.
+
+</details>
+
 
 <details>
 <summary><b>Telegram</b> (Recommended)</summary>
@@ -520,6 +553,8 @@ chmod +x ~/.termux/boot/start-mobot.sh
 | **WhatsApp QR: bridge not found** | Run `mobot channels login` once (auto-installs bridge), or install Node.js first: `pkg install nodejs` |
 | **Ollama: connection refused** | Make sure Ollama is running: `ollama serve` |
 | **Ollama on Android — no models** | Run Ollama on a PC on the same Wi-Fi, set URL to `http://<your-pc-ip>:11434` in web UI |
+| **WebChat: blank page** | Ensure MOBOT is installed from source (`pip install -e .`) so `webchat_ui.html` is included |
+| **WebChat: replies not appearing** | Check that `mobot gateway` is running; browser must stay open and connected (green dot shown) |
 | `pkg install` fails | Run `pkg update && pkg upgrade -y` first |
 | Screenshot blank | Install Termux:API from F-Droid AND `pkg install termux-api` |
 | Storage permission denied | Run `termux-setup-storage` and tap Allow |

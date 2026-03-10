@@ -79,6 +79,8 @@ include = [
     "mobot/templates/**/*.md",
     "mobot/skills/**/*.md",
     "mobot/skills/**/*.sh",
+    "mobot/channels/webchat_ui.html",
+    "mobot/web/index.html",
 ]
 
 [tool.hatch.build.targets.sdist]
